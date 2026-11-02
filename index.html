@@ -1,0 +1,1186 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f7f5ef">
+<title>CASA CLUB</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --bg:#f7f5ef;
+  --card:#ffffff;
+  --ink:#27352f;
+  --muted:#78827b;
+  --green:#3e7559;
+  --green-light:#e5efe7;
+  --orange:#f1b76c;
+  --red:#b94b4b;
+  --border:#e8e9e2;
+  --radius:18px;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+button,input,select,textarea { font:inherit; }
+button { cursor:pointer; }
+header {
+  max-width:850px;
+  margin:auto;
+  padding:24px 18px 8px;
+}
+.brand { display:flex;align-items:center;gap:12px; }
+.logo {
+  width:48px;height:48px;border-radius:16px;
+  display:grid;place-items:center;
+  background:var(--green);color:white;
+  font-size:25px;font-weight:800;
+}
+h1 { font-size:24px;margin:0; }
+.tagline { color:var(--muted);font-size:13px;margin-top:4px; }
+main { max-width:850px;margin:auto;padding:12px 16px 110px; }
+.card {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:18px;margin:12px 0;
+  box-shadow:0 3px 12px #28372d08;
+}
+h2 { font-size:19px;margin:0 0 14px; }
+h3 { font-size:16px;margin:10px 0; }
+p { line-height:1.5; }
+.sub { color:var(--muted);font-size:13px; }
+.big-number { font-size:32px;font-weight:800;margin:8px 0; }
+label { display:block;font-size:13px;font-weight:650;margin:12px 0 6px; }
+input,select,textarea {
+  width:100%;padding:12px;
+  border:1px solid var(--border);
+  border-radius:11px;background:#fff;color:var(--ink);
+}
+textarea { min-height:75px;resize:vertical; }
+button {
+  border:0;border-radius:11px;padding:11px 15px;
+  background:var(--green);color:white;font-weight:650;
+}
+button:disabled { opacity:.45;cursor:not-allowed; }
+.btn-secondary { background:var(--green-light);color:var(--green); }
+.btn-danger { background:#f8e9e7;color:var(--red); }
+.btn-small { padding:8px 11px;font-size:13px; }
+.actions { display:flex;gap:8px;flex-wrap:wrap;margin-top:12px; }
+.row { display:flex;align-items:center;gap:12px; }
+.between { justify-content:space-between; }
+.grow { flex:1;min-width:0; }
+.pill {
+  display:inline-block;padding:5px 9px;border-radius:20px;
+  font-size:12px;font-weight:700;background:#eee;color:#555;
+}
+.pending { background:#fff0d9;color:#96621c; }
+.approved { background:#e3f2e7;color:#34714a; }
+.partial { background:#fff0d9;color:#96621c; }
+.rejected { background:#f8e5e5;color:#a63d3d; }
+.nav {
+  position:fixed;bottom:0;left:0;right:0;
+  display:flex;justify-content:space-around;
+  background:#ffffffed;border-top:1px solid var(--border);
+  padding:8px 4px max(8px,env(safe-area-inset-bottom));
+  z-index:10;backdrop-filter:blur(12px);
+}
+.nav button {
+  background:transparent;color:var(--muted);
+  padding:6px 3px;min-width:0;flex:1;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  font-size:19px;
+}
+.nav button small { font-size:10px;font-weight:600; }
+.nav button.active { color:var(--green); }
+.member-row { padding:12px 0;border-bottom:1px solid var(--border); }
+.member-row:last-child { border:0; }
+.empty { color:var(--muted);font-size:14px;padding:10px 0; }
+.hidden { display:none!important; }
+hr { border:0;border-top:1px solid var(--border);margin:16px 0; }
+#message {
+  position:fixed;top:12px;left:12px;right:12px;
+  max-width:500px;margin:auto;z-index:30;
+  padding:13px 16px;border-radius:12px;
+  background:#263b30;color:white;
+  box-shadow:0 5px 20px #0002;display:none;
+}
+#login {
+  max-width:440px;margin:35px auto;padding:16px;
+}
+#login .card { padding:24px; }
+@media(min-width:650px) {
+  .nav { position:static;max-width:850px;margin:10px auto;
+    border:1px solid var(--border);border-radius:15px;
+  }
+  .nav button { flex-direction:row;justify-content:center;gap:7px; }
+  main { padding-bottom:30px; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="message"></div>
+
+<div id="login" class="hidden">
+  <div class="card">
+    <div class="brand">
+      <div class="logo">C</div>
+      <div>
+        <h1>CASA CLUB</h1>
+        <div class="tagline">La casa è una squadra. Ogni gesto conta.</div>
+      </div>
+    </div>
+    <hr>
+    <h2>Benvenuto!</h2>
+    <form id="loginForm">
+      <label>Email</label>
+      <input id="email" type="email" autocomplete="username" required>
+      <label>Password</label>
+      <input id="password" type="password" autocomplete="current-password" required>
+      <div class="actions">
+        <button type="submit" id="loginButton">Accedi</button>
+      </div>
+      <p class="sub">Accedi con il tuo account familiare.</p>
+    </form>
+  </div>
+</div>
+
+<div id="application" class="hidden">
+  <header>
+    <div class="brand">
+      <div class="logo">C</div>
+      <div>
+        <h1>CASA CLUB</h1>
+        <div class="tagline">La casa è una squadra. Ogni gesto conta.</div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="nav" id="navigation">
+    <button data-tab="home" class="active">🏠<small>Feed</small></button>
+    <button data-tab="tasks">🧹<small>Faccende</small></button>
+    <button data-tab="reviews">✅<small>Conferme</small></button>
+    <button data-tab="ranking">🏆<small>Classifica</small></button>
+    <button data-tab="rewards">🎁<small>Premi</small></button>
+    <button data-tab="settings">⚙️<small>Impostazioni</small></button>
+  </nav>
+
+  <main id="app"></main>
+</div>
+
+<script>
+'use strict';
+
+// ======================================
+// CONFIGURAZIONE SUPABASE
+// ======================================
+
+const SUPABASE_URL =
+  'https://bdftsbhfomlowpoxihgp.supabase.co';
+
+const SUPABASE_KEY =
+  'sb_publishable_yNVMFohrVcCdPm_tMkIj2Q_xJM8eS5C';
+
+const FAMILY_ID =
+  '034db486-32d2-4919-8f5c-596d7c2b787a';
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+// ======================================
+// STATO
+// ======================================
+
+let session = null;
+let currentMember = null;
+let members = [];
+let tasks = [];
+let completions = [];
+let rewards = [];
+let ledger = [];
+let currentTab = 'home';
+let busy = false;
+let refreshTimer = null;
+
+const $ = id => document.getElementById(id);
+
+function esc(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  })[c]);
+}
+
+function notify(message) {
+  const box = $('message');
+  box.textContent = message;
+  box.style.display = 'block';
+  setTimeout(() => box.style.display = 'none', 3500);
+}
+
+function isAdult() {
+  return currentMember?.role === 'adult';
+}
+
+function memberName(id) {
+  return members.find(m => m.id === id)?.display_name || 'Membro';
+}
+
+function memberById(id) {
+  return members.find(m => m.id === id) || null;
+}
+
+function taskById(id) {
+  return tasks.find(t => t.id === id) || null;
+}
+
+function rewardById(id) {
+  return rewards.find(r => r.id === id) || null;
+}
+
+function pointsBalance(memberId) {
+  return ledger
+    .filter(x => x.member_id === memberId)
+    .reduce((sum,x) => {
+      const n = Number(x.points) || 0;
+      if (x.entry_type === 'earn') return sum + n;
+      if (x.entry_type === 'redeem') return sum - n;
+      if (x.entry_type === 'adjustment') return sum + n;
+      return sum;
+    },0);
+}
+
+function statusLabel(status) {
+  return ({
+    pending:'In attesa',
+    approved:'Approvata',
+    partial:'Da completare',
+    rejected:'Rifiutata'
+  })[status] || status;
+}
+
+// ======================================
+// AUTENTICAZIONE
+// ======================================
+
+function showLogin() {
+  $('application').classList.add('hidden');
+  $('login').classList.remove('hidden');
+}
+
+function showApplication() {
+  $('login').classList.add('hidden');
+  $('application').classList.remove('hidden');
+}
+
+async function login(event) {
+  event.preventDefault();
+
+  const button = $('loginButton');
+  button.disabled = true;
+  button.textContent = 'Accesso...';
+
+  try {
+    const {data,error} = await db.auth.signInWithPassword({
+      email:$('email').value.trim(),
+      password:$('password').value
+    });
+
+    if (error) throw error;
+
+    session = data.session;
+    await initialize();
+
+  } catch(error) {
+    notify('Accesso non riuscito: ' + error.message);
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Accedi';
+  }
+}
+
+async function logout() {
+  stopRefresh();
+
+  const {error} = await db.auth.signOut();
+  if (error) {
+    notify(error.message);
+    return;
+  }
+
+  session = null;
+  currentMember = null;
+  showLogin();
+}
+
+async function checkSession() {
+  const {data,error} = await db.auth.getSession();
+  if (error) throw error;
+
+  session = data.session;
+
+  if (session) {
+    await initialize();
+  } else {
+    showLogin();
+  }
+}
+
+// ======================================
+// CARICAMENTO DATI
+// ======================================
+
+async function initialize() {
+  showApplication();
+  $('app').innerHTML = '<div class="card">Caricamento CASA CLUB...</div>';
+
+  try {
+    const {data:memberData,error:memberError} = await db
+      .from('members')
+      .select('*')
+      .eq('family_id',FAMILY_ID);
+
+    if (memberError) throw memberError;
+
+    members = memberData || [];
+
+    currentMember = members.find(
+      m => m.auth_user_id === session.user.id
+    );
+
+    if (!currentMember) {
+      throw new Error('Account non associato alla famiglia CASA CLUB.');
+    }
+
+    await loadData();
+    render();
+    startRefresh();
+
+  } catch(error) {
+    $('app').innerHTML =
+      '<div class="card"><h2>Errore</h2><p>' +
+      esc(error.message) + '</p><button id="retry">Riprova</button></div>';
+    $('retry').onclick = initialize;
+  }
+}
+
+async function loadData() {
+  const results = await Promise.all([
+    db.from('tasks').select('*')
+      .eq('family_id',FAMILY_ID)
+      .order('created_at',{ascending:false}),
+
+    db.from('completions').select('*')
+      .eq('family_id',FAMILY_ID)
+      .order('submitted_at',{ascending:false}),
+
+    db.from('rewards').select('*')
+      .eq('family_id',FAMILY_ID)
+      .order('created_at',{ascending:false}),
+
+    db.from('points_ledger').select('*')
+      .eq('family_id',FAMILY_ID)
+      .order('created_at',{ascending:false})
+  ]);
+
+  const labels = ['attività','conferme','premi','punti'];
+
+  results.forEach((result,index) => {
+    if (result.error) {
+      throw new Error('Errore caricamento ' + labels[index] +
+        ': ' + result.error.message);
+    }
+  });
+
+  tasks = results[0].data || [];
+  completions = results[1].data || [];
+  rewards = results[2].data || [];
+  ledger = results[3].data || [];
+}
+
+async function refreshData() {
+  if (busy || !session) return;
+  try {
+    await loadData();
+    render();
+  } catch(error) {
+    notify('Aggiornamento non riuscito: ' + error.message);
+  }
+}
+
+function startRefresh() {
+  stopRefresh();
+  refreshTimer = setInterval(refreshData,30000);
+}
+
+function stopRefresh() {
+  if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = null;
+}
+
+// ======================================
+// NAVIGAZIONE
+// ======================================
+
+$('navigation').addEventListener('click',event => {
+  const button = event.target.closest('[data-tab]');
+  if (!button) return;
+
+  currentTab = button.dataset.tab;
+  render();
+});
+
+function render() {
+  if (!currentMember) return;
+
+  document.querySelectorAll('[data-tab]').forEach(button => {
+    button.classList.toggle(
+      'active',
+      button.dataset.tab === currentTab
+    );
+  });
+
+  const pages = {
+    home:renderHome,
+    tasks:renderTasksPage,
+    reviews:renderReviewsPage,
+    ranking:renderRankingPage,
+    rewards:renderRewardsPage,
+    settings:renderSettingsPage
+  };
+
+  $('app').innerHTML = pages[currentTab]();
+}
+
+// ======================================
+// INTESTAZIONE PERSONALE
+// ======================================
+
+function headerCard() {
+  return `
+    <div class="card">
+      <div class="row between">
+        <div class="grow">
+          <div class="sub">Bentornato</div>
+          <h2>${esc(currentMember.display_name)}</h2>
+          <div class="sub">${isAdult() ? 'Amministratore' : 'Membro'}</div>
+        </div>
+        <div class="logo">C</div>
+      </div>
+      <hr>
+      <div class="sub">Il tuo saldo</div>
+      <div class="big-number">${pointsBalance(currentMember.id)} punti</div>
+    </div>
+  `;
+}
+
+// ======================================
+// FEED
+// ======================================
+
+function renderHome() {
+  const recent = completions.slice(0,5);
+
+  return headerCard() + `
+    <div class="card">
+      <h2>La nostra squadra</h2>
+      ${members.map(m => `
+        <div class="row between member-row">
+          <strong>${esc(m.display_name)}</strong>
+          <strong>${pointsBalance(m.id)} punti</strong>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="card">
+      <h2>Le tue attività recenti</h2>
+      ${myCompletions().slice(0,4).map(completionCard).join('') ||
+        '<p class="empty">Non hai ancora inviato attività.</p>'}
+    </div>
+
+    <div class="card">
+      <h2>Ultimi aggiornamenti</h2>
+      ${recent.map(completionCard).join('') ||
+        '<p class="empty">Nessuna attività registrata.</p>'}
+    </div>
+  `;
+}
+
+// ======================================
+// ATTIVITÀ
+// ======================================
+
+function myCompletions() {
+  return completions.filter(
+    c => c.performed_by === currentMember.id
+  );
+}
+
+function renderTasksPage() {
+  const available = tasks.filter(t =>
+    t.is_active &&
+    t.target_type === currentMember.role &&
+    (!t.assigned_member_id ||
+      t.assigned_member_id === currentMember.id)
+  );
+
+  return headerCard() + `
+    <div class="card">
+      <h2>Le tue faccende</h2>
+      ${available.map(t => {
+        const pending = completions.some(c =>
+          c.task_id === t.id &&
+          c.performed_by === currentMember.id &&
+          c.status === 'pending'
+        );
+
+        return `
+          <div class="card">
+            <div class="row between">
+              <strong>${esc(t.title)}</strong>
+              <span class="pill">${Number(t.points)||0} punti</span>
+            </div>
+            <p>${esc(t.description || '')}</p>
+            <div class="sub">${esc(t.category || 'Generale')}</div>
+            <div class="actions">
+              <button data-action="submit-task"
+                data-id="${t.id}" ${pending?'disabled':''}>
+                ${pending?'In attesa':'Ho completato'}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('') ||
+      '<p class="empty">Nessuna attività disponibile.</p>'}
+    </div>
+
+    <div class="card">
+      <h2>Le mie attività inviate</h2>
+      ${myCompletions().map(c => {
+        const t = taskById(c.task_id);
+        return `
+          <div class="member-row">
+            <div class="row between">
+              <strong>${esc(t?.title || 'Attività')}</strong>
+              <span class="pill ${c.status}">
+                ${statusLabel(c.status)}
+              </span>
+            </div>
+            ${c.status === 'partial' ? `
+              <div class="actions">
+                <button data-action="resubmit"
+                  data-id="${c.id}">Invia nuovamente</button>
+              </div>
+            `:''}
+          </div>
+        `;
+      }).join('') ||
+      '<p class="empty">Nessuna attività inviata.</p>'}
+    </div>
+  `;
+}
+
+// ======================================
+// INVIO ATTIVITÀ
+// ======================================
+
+async function submitTask(taskId) {
+  const task = taskById(taskId);
+
+  if (!task || !task.is_active) {
+    notify('Attività non disponibile.');
+    return;
+  }
+
+  if (task.target_type !== currentMember.role) {
+    notify('Attività non destinata al tuo profilo.');
+    return;
+  }
+
+  if (task.assigned_member_id &&
+      task.assigned_member_id !== currentMember.id) {
+    notify('Attività assegnata a un altro membro.');
+    return;
+  }
+
+  const pending = completions.some(c =>
+    c.task_id === taskId &&
+    c.performed_by === currentMember.id &&
+    c.status === 'pending'
+  );
+
+  if (pending) {
+    notify('Questa attività è già in attesa.');
+    return;
+  }
+
+  await runAction(async () => {
+    const {error} = await db.rpc('submit_completion',{
+      p_task_id:taskId
+    });
+    if (error) throw error;
+    notify('Attività inviata per la conferma!');
+  });
+}
+
+// ======================================
+// CONFERME
+// ======================================
+
+function renderReviewsPage() {
+  if (!isAdult()) {
+    return headerCard() +
+      '<div class="card">Solo gli adulti possono esaminare le attività.</div>';
+  }
+
+  const pending = completions.filter(c =>
+    c.status === 'pending' &&
+    c.reviewer_member_id === currentMember.id
+  );
+
+  return headerCard() + `
+    <div class="card">
+      <h2>Da esaminare</h2>
+      ${pending.map(c => {
+        const task = taskById(c.task_id);
+
+        return `
+          <div class="card">
+            <strong>${esc(task?.title || 'Attività')}</strong>
+            <p class="sub">Inviata da ${esc(memberName(c.performed_by))}</p>
+            <p>Valore: ${Number(c.submitted_points ?? task?.points ?? 0)} punti</p>
+            <label>Nota (facoltativa)</label>
+            <textarea id="note-${c.id}" placeholder="Scrivi una nota"></textarea>
+            <div class="actions">
+              <button data-action="review"
+                data-id="${c.id}" data-decision="approved">
+                Approva
+              </button>
+              <button class="btn-secondary"
+                data-action="review"
+                data-id="${c.id}" data-decision="partial">
+                Parziale
+              </button>
+              <button class="btn-danger"
+                data-action="review"
+                data-id="${c.id}" data-decision="rejected">
+                Rifiuta
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('') ||
+      '<p class="empty">Non hai attività da esaminare.</p>'}
+    </div>
+  `;
+}
+
+async function reviewTask(id,decision,note) {
+  const completion = completions.find(c => c.id === id);
+
+  if (!isAdult() || !completion) {
+    notify('Operazione non consentita.');
+    return;
+  }
+
+  if (completion.performed_by === currentMember.id) {
+    notify('Non puoi approvare una tua attività.');
+    return;
+  }
+
+  if (completion.reviewer_member_id !== currentMember.id) {
+    notify('Questa revisione è assegnata all’altro adulto.');
+    return;
+  }
+
+  await runAction(async () => {
+    const {error} = await db.rpc('review_completion',{
+      p_completion_id:id,
+      p_decision:decision,
+      p_note:note.trim() || null
+    });
+
+    if (error) throw error;
+
+    notify(
+      decision === 'approved' ? 'Attività approvata!' :
+      decision === 'partial' ? 'Attività parziale: potrà essere ripresentata.' :
+      'Attività rifiutata.'
+    );
+  });
+}
+
+async function resubmitTask(id) {
+  const completion = completions.find(c => c.id === id);
+
+  if (!completion ||
+      completion.performed_by !== currentMember.id ||
+      completion.status !== 'partial') {
+    notify('Non puoi ripresentare questa attività.');
+    return;
+  }
+
+  await runAction(async () => {
+    const {error} = await db.rpc('resubmit_completion',{
+      p_completion_id:id
+    });
+    if (error) throw error;
+    notify('Attività inviata nuovamente!');
+  });
+}
+
+// ======================================
+// CLASSIFICA E STORICO
+// ======================================
+
+function renderRankingPage() {
+  const ranking = [...members].sort(
+    (a,b) => pointsBalance(b.id)-pointsBalance(a.id)
+  );
+
+  return headerCard() + `
+    <div class="card">
+      <h2>Classifica familiare</h2>
+      ${ranking.map((m,i) => `
+        <div class="row between member-row">
+          <div class="row">
+            <div class="logo" style="width:36px;height:36px;font-size:16px">
+              ${i+1}
+            </div>
+            <strong>${esc(m.display_name)}</strong>
+          </div>
+          <strong>${pointsBalance(m.id)} punti</strong>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="card">
+      <h2>Storico attività</h2>
+      ${completions.map(completionCard).join('') ||
+        '<p class="empty">Lo storico è ancora vuoto.</p>'}
+    </div>
+
+    <div class="card">
+      <h2>Movimenti punti</h2>
+      ${ledger.slice(0,30).map(entry => `
+        <div class="member-row row between">
+          <div>
+            <strong>${esc(memberName(entry.member_id))}</strong>
+            <div class="sub">${esc(entry.note || entry.entry_type)}</div>
+          </div>
+          <strong>${entry.entry_type === 'redeem' ? '-' : '+'}${Number(entry.points)||0}</strong>
+        </div>
+      `).join('') ||
+        '<p class="empty">Nessun movimento registrato.</p>'}
+    </div>
+  `;
+}
+
+function completionCard(c) {
+  const task = taskById(c.task_id);
+  const date = c.reviewed_at || c.submitted_at;
+
+  return `
+    <div class="member-row">
+      <div class="row between">
+        <strong>${esc(task?.title || 'Attività')}</strong>
+        <span class="pill ${c.status}">
+          ${statusLabel(c.status)}
+        </span>
+      </div>
+      <div class="sub">Eseguita da ${esc(memberName(c.performed_by))}</div>
+      <div class="sub">
+        ${date ? new Date(date).toLocaleString('it-IT') : ''}
+      </div>
+      <div>Punti assegnati: <strong>${Number(c.awarded_points)||0}</strong></div>
+      ${c.review_note ? `<div class="sub">Nota: ${esc(c.review_note)}</div>`:''}
+    </div>
+  `;
+}
+
+// ======================================
+// PREMI
+// ======================================
+
+function renderRewardsPage() {
+  const available = rewards.filter(r =>
+    r.is_active && r.target_type === currentMember.role
+  );
+
+  return headerCard() + `
+    <div class="card">
+      <h2>Premi disponibili</h2>
+      ${available.map(r => `
+        <div class="card">
+          <strong>${esc(r.title)}</strong>
+          <p>${esc(r.description || '')}</p>
+          <div class="big-number">${Number(r.points_cost)||0} punti</div>
+          <button disabled class="btn-secondary">
+            Riscatto non ancora disponibile
+          </button>
+        </div>
+      `).join('') ||
+      '<p class="empty">Nessun premio disponibile per il tuo profilo.</p>'}
+    </div>
+  `;
+}
+
+// ======================================
+// IMPOSTAZIONI E CATALOGO
+// ======================================
+
+function renderSettingsPage() {
+  return headerCard() + `
+    <div class="card">
+      <h2>Il tuo account</h2>
+      <p><strong>${esc(currentMember.display_name)}</strong></p>
+      <p class="sub">${esc(session.user.email)}</p>
+      <p class="sub">Ruolo: ${esc(currentMember.role)}</p>
+      <hr>
+      <h3>Componenti della famiglia</h3>
+      ${members.map(m => `
+        <div class="member-row row between">
+          <strong>${esc(m.display_name)}</strong>
+          <span class="pill">${esc(m.role)}</span>
+        </div>
+      `).join('')}
+    </div>
+
+    ${isAdult() ? `
+      <div class="card">
+        <h2>Nuova attività</h2>
+        <form id="taskForm">
+          <label>Nome</label>
+          <input name="title" required maxlength="120">
+          <label>Categoria</label>
+          <input name="category">
+          <label>Descrizione</label>
+          <textarea name="description"></textarea>
+          <label>Punti</label>
+          <input name="points" type="number" min="0" value="10" required>
+          <label>Destinatari</label>
+          <select name="target_type">
+            <option value="adult">Adulti</option>
+            <option value="child">Bambini</option>
+          </select>
+          <label>Assegna a (facoltativo)</label>
+          <select name="assigned_member_id">
+            <option value="">Tutti i destinatari</option>
+            ${members.filter(m => m.role === 'adult').map(m => `
+              <option value="${m.id}">${esc(m.display_name)}</option>
+            `).join('')}
+          </select>
+          <div class="actions">
+            <button type="submit">Crea attività</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Gestione attività</h2>
+        ${tasks.map(t => `
+          <div class="member-row">
+            <div class="row between">
+              <strong>${esc(t.title)}</strong>
+              <span class="pill">${t.is_active?'Attiva':'Disattivata'}</span>
+            </div>
+            <div class="sub">
+              ${esc(t.target_type)} · ${Number(t.points)||0} punti
+            </div>
+            <div class="actions">
+              <button class="btn-secondary btn-small"
+                data-action="edit-task" data-id="${t.id}">Modifica</button>
+              <button class="btn-small"
+                data-action="toggle-task" data-id="${t.id}"
+                data-active="${!t.is_active}">
+                ${t.is_active?'Disattiva':'Riattiva'}
+              </button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="card">
+        <h2>Nuovo premio</h2>
+        <form id="rewardForm">
+          <label>Nome</label>
+          <input name="title" required maxlength="120">
+          <label>Descrizione</label>
+          <textarea name="description"></textarea>
+          <label>Costo in punti</label>
+          <input name="points_cost" type="number" min="0" value="50" required>
+          <label>Destinatari</label>
+          <select name="target_type">
+            <option value="adult">Adulti</option>
+            <option value="child">Bambini</option>
+          </select>
+          <div class="actions">
+            <button type="submit">Crea premio</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Gestione premi</h2>
+        ${rewards.map(r => `
+          <div class="member-row">
+            <div class="row between">
+              <strong>${esc(r.title)}</strong>
+              <span class="pill">${r.is_active?'Attivo':'Disattivato'}</span>
+            </div>
+            <div class="sub">${Number(r.points_cost)||0} punti · ${esc(r.target_type)}</div>
+            <div class="actions">
+              <button class="btn-secondary btn-small"
+                data-action="edit-reward" data-id="${r.id}">Modifica</button>
+              <button class="btn-small"
+                data-action="toggle-reward" data-id="${r.id}"
+                data-active="${!r.is_active}">
+                ${r.is_active?'Disattiva':'Riattiva'}
+              </button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `:''}
+
+    <div class="card">
+      <h2>Sessione</h2>
+      <button class="btn-danger" data-action="logout">Esci da CASA CLUB</button>
+    </div>
+  `;
+}
+
+// ======================================
+// CATALOGO: OPERAZIONI SUPABASE
+// ======================================
+
+async function createTask(data) {
+  const {error} = await db.rpc('create_task',{
+    p_title:data.title,
+    p_category:data.category || null,
+    p_description:data.description || null,
+    p_points:Number(data.points),
+    p_target_type:data.target_type,
+    p_assigned_member_id:data.assigned_member_id || null
+  });
+  if (error) throw error;
+}
+
+async function updateTask(id,data) {
+  const {error} = await db.rpc('update_task',{
+    p_task_id:id,
+    p_title:data.title,
+    p_category:data.category || null,
+    p_description:data.description || null,
+    p_points:Number(data.points),
+    p_assigned_member_id:data.assigned_member_id || null
+  });
+  if (error) throw error;
+}
+
+async function setTaskActive(id,active) {
+  const {error} = await db.rpc('set_task_active',{
+    p_task_id:id,
+    p_is_active:active
+  });
+  if (error) throw error;
+}
+
+async function createReward(data) {
+  const {error} = await db.rpc('create_reward',{
+    p_title:data.title,
+    p_description:data.description || null,
+    p_points_cost:Number(data.points_cost),
+    p_target_type:data.target_type
+  });
+  if (error) throw error;
+}
+
+async function updateReward(id,data) {
+  const {error} = await db.rpc('update_reward',{
+    p_reward_id:id,
+    p_title:data.title,
+    p_description:data.description || null,
+    p_points_cost:Number(data.points_cost)
+  });
+  if (error) throw error;
+}
+
+async function setRewardActive(id,active) {
+  const {error} = await db.rpc('set_reward_active',{
+    p_reward_id:id,
+    p_is_active:active
+  });
+  if (error) throw error;
+}
+
+// ======================================
+// AZIONI E FORM
+// ======================================
+
+async function runAction(action) {
+  if (busy) return;
+  busy = true;
+
+  try {
+    await action();
+    await loadData();
+    render();
+  } catch(error) {
+    notify('Operazione non riuscita: ' + error.message);
+  } finally {
+    busy = false;
+  }
+}
+
+$('app').addEventListener('click',async event => {
+  const button = event.target.closest('[data-action]');
+  if (!button) return;
+
+  const action = button.dataset.action;
+  const id = button.dataset.id;
+
+  if (action === 'logout') {
+    await logout();
+    return;
+  }
+
+  if (action === 'submit-task') {
+    await runAction(() => submitTask(id));
+    return;
+  }
+
+  if (action === 'resubmit') {
+    await runAction(() => resubmitTask(id));
+    return;
+  }
+
+  if (action === 'review') {
+    const note = $('note-' + id)?.value || '';
+    await runAction(() => reviewTask(id,button.dataset.decision,note));
+    return;
+  }
+
+  if (action === 'toggle-task') {
+    await runAction(() => setTaskActive(id,button.dataset.active === 'true'));
+    return;
+  }
+
+  if (action === 'toggle-reward') {
+    await runAction(() => setRewardActive(id,button.dataset.active === 'true'));
+    return;
+  }
+
+  if (action === 'edit-task') {
+    const t = taskById(id);
+    if (!t) return;
+
+    const title = prompt('Nome attività:',t.title);
+    if (title === null) return;
+    const category = prompt('Categoria:',t.category || '');
+    if (category === null) return;
+    const description = prompt('Descrizione:',t.description || '');
+    if (description === null) return;
+    const points = prompt('Punti:',t.points);
+    if (points === null || !Number.isFinite(Number(points)) || Number(points)<0) {
+      notify('Numero di punti non valido.');
+      return;
+    }
+
+    await runAction(() => updateTask(id,{
+      title,category,description,points,
+      assigned_member_id:t.assigned_member_id
+    }));
+    return;
+  }
+
+  if (action === 'edit-reward') {
+    const r = rewardById(id);
+    if (!r) return;
+
+    const title = prompt('Nome premio:',r.title);
+    if (title === null) return;
+    const description = prompt('Descrizione:',r.description || '');
+    if (description === null) return;
+    const points = prompt('Costo in punti:',r.points_cost);
+    if (points === null || !Number.isFinite(Number(points)) || Number(points)<0) {
+      notify('Costo non valido.');
+      return;
+    }
+
+    await runAction(() => updateReward(id,{
+      title,description,points_cost:points
+    }));
+  }
+});
+
+$('app').addEventListener('submit',async event => {
+  event.preventDefault();
+
+  const form = event.target;
+  const data = Object.fromEntries(new FormData(form).entries());
+
+  if (form.id === 'taskForm') {
+    if (!data.title.trim() || Number(data.points)<0) {
+      notify('Controlla il nome e i punti.');
+      return;
+    }
+
+    if (data.assigned_member_id) {
+      const selected = memberById(data.assigned_member_id);
+      if (!selected || selected.role !== data.target_type) {
+        notify('Il membro assegnato deve avere il ruolo corretto.');
+        return;
+      }
+    }
+
+    await runAction(() => createTask(data));
+    return;
+  }
+
+  if (form.id === 'rewardForm') {
+    if (!data.title.trim() || Number(data.points_cost)<0) {
+      notify('Controlla il nome e il costo.');
+      return;
+    }
+
+    await runAction(() => createReward(data));
+  }
+});
+
+// ======================================
+// LOGIN E AVVIO
+// ======================================
+
+$('loginForm').addEventListener('submit',login);
+
+db.auth.onAuthStateChange(event => {
+  if (event === 'SIGNED_OUT') {
+    stopRefresh();
+    session = null;
+    currentMember = null;
+    showLogin();
+  }
+});
+
+checkSession().catch(error => {
+  showLogin();
+  notify('Errore di avvio: ' + error.message);
+});
+
+</script>
+</body>
+</html>
