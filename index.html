@@ -3,651 +3,1123 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f5f2ec">
-<title>CASA CLUB</title>
+<meta name="theme-color" content="#f7f3ed">
+<title>CASA CLUB — La casa è una squadra</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-:root{
---bg:#f5f2ec;--card:#fffefa;--surface:#eeece5;--ink:#273631;
---muted:#77827c;--green:#315f59;--green-light:#e1ece7;
---teal:#78a99a;--coral:#d98d79;--coral-light:#f7e8e2;
---gold:#c49a4e;--gold-light:#f5eddc;--lilac:#9589b8;
---lilac-light:#eeeaf5;--red:#ad5550;--border:#e5e4dc;
---radius:20px;--shadow:0 8px 28px #283b3010;
+:root {
+  color-scheme: light;
+  --bg:#f6f2ec;
+  --surface:#fffdf9;
+  --surface-2:#f0ebe3;
+  --text:#252824;
+  --muted:#85877f;
+  --line:#e9e3da;
+  --coral:#df806d;
+  --coral-soft:#f8e5df;
+  --sage:#879b83;
+  --sage-soft:#e8eee5;
+  --lilac:#a69abd;
+  --lilac-soft:#eeeaf5;
+  --blue:#7196a0;
+  --blue-soft:#e5eef0;
+  --mustard:#d2a64f;
+  --mustard-soft:#f6efd9;
+  --shadow:0 8px 28px rgba(48,43,34,.055);
+  --radius:22px;
 }
-:root[data-theme="dark"]{
---bg:#202a29;--card:#293533;--surface:#34413e;--ink:#f1f0e9;
---muted:#b0bbb4;--green:#8bb8a6;--green-light:#354b43;
---teal:#8ab9ab;--coral:#e2a18e;--coral-light:#503c38;
---gold:#dfbd79;--gold-light:#4a4231;--lilac:#b2a6d2;
---lilac-light:#403b50;--red:#e08d85;--border:#40504b;
---shadow:0 8px 28px #0003;
+
+[data-theme="dark"] {
+  color-scheme:dark;
+  --bg:#171d1d;
+  --surface:#222b2a;
+  --surface-2:#2c3634;
+  --text:#f3f0e9;
+  --muted:#a3aaa2;
+  --line:#394441;
+  --coral:#e48d79;
+  --coral-soft:#49332f;
+  --sage:#9caf94;
+  --sage-soft:#303e35;
+  --lilac:#b9add1;
+  --lilac-soft:#3b3549;
+  --blue:#8bb2bb;
+  --blue-soft:#2e4146;
+  --mustard:#e0b85e;
+  --mustard-soft:#453d29;
+  --shadow:0 8px 28px rgba(0,0,0,.18);
 }
-*{box-sizing:border-box}
-body{
-margin:0;background:var(--bg);color:var(--ink);
-font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-transition:background .2s,color .2s
+
+* {box-sizing:border-box}
+html {scroll-behavior:smooth}
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:15px;
+  line-height:1.5;
+  transition:background .2s,color .2s;
 }
-button,input,select,textarea{font:inherit}
-button{
-cursor:pointer;border:0;border-radius:13px;padding:12px 16px;
-background:var(--green);color:white;font-weight:700;
-transition:transform .15s,opacity .15s
+button,input,select,textarea {font:inherit}
+button {cursor:pointer}
+button:disabled {opacity:.45;cursor:not-allowed}
+.hidden {display:none!important}
+.muted {color:var(--muted)}
+.small {font-size:12px}
+.eyebrow {
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:1.7px;
+  text-transform:uppercase;
+  color:var(--muted);
 }
-button:active{transform:scale(.98)}
-button:disabled{opacity:.45;cursor:not-allowed}
-.btn-secondary{background:var(--green-light);color:var(--green)}
-.btn-coral{background:var(--coral-light);color:var(--coral)}
-.btn-danger{background:var(--coral-light);color:var(--red)}
-.btn-gold{background:var(--gold-light);color:var(--gold)}
-.btn-small{padding:9px 12px;font-size:13px}
-header,main,.nav{max-width:900px;margin:auto}
-header{padding:24px 18px 12px}
-.brand{display:flex;align-items:center;gap:13px}
-.logo{
-width:48px;height:48px;border-radius:16px;display:grid;
-place-items:center;background:var(--green);color:white;
-font-size:24px;font-weight:800;flex-shrink:0
+.app-shell {min-height:100vh;padding-bottom:100px}
+.topbar {
+  max-width:1100px;
+  margin:auto;
+  padding:22px 24px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
 }
-h1{font-size:22px;letter-spacing:1.5px;margin:0}
-h2{font-size:19px;margin:0 0 14px}
-h3{font-size:16px;margin:0 0 7px}
-p{line-height:1.5}
-.tagline,.sub{color:var(--muted);font-size:13px}
-.tagline{margin-top:4px}
-.header-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.header-actions{display:flex;gap:8px}
-main{padding:12px 16px 115px}
-.card{
-background:var(--card);border:1px solid var(--border);
-border-radius:var(--radius);padding:18px;margin:12px 0;
-box-shadow:var(--shadow)
+.brand {display:flex;align-items:center;gap:12px}
+.brand-mark {
+  width:43px;height:43px;border-radius:15px;
+  display:grid;place-items:center;
+  background:var(--coral);
+  color:white;font-size:21px;
+  box-shadow:0 5px 14px rgba(223,128,109,.2);
 }
-.welcome{
-padding:24px;border-radius:24px;
-background:linear-gradient(125deg,var(--green-light),var(--card));
-margin:8px 0 17px;box-shadow:var(--shadow)
+.brand-name {font-size:17px;font-weight:900;letter-spacing:1.4px}
+.brand-sub {font-size:10px;color:var(--muted);letter-spacing:.5px}
+.top-actions {display:flex;align-items:center;gap:9px}
+.icon-btn {
+  width:42px;height:42px;border:1px solid var(--line);
+  background:var(--surface);color:var(--text);
+  border-radius:15px;display:grid;place-items:center;
+  font-size:18px;
 }
-.eyebrow{
-font-size:11px;text-transform:uppercase;letter-spacing:1.5px;
-color:var(--muted);font-weight:800
+.user-chip {
+  display:flex;align-items:center;gap:8px;
+  padding:7px 12px 7px 8px;
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:30px;font-size:12px;font-weight:700;
 }
-.welcome h2{font-size:26px;margin:9px 0}
-.welcome p{margin:0;color:var(--muted);font-size:14px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0}
-.stat{
-background:var(--card);border:1px solid var(--border);
-border-radius:17px;padding:14px 11px;box-shadow:var(--shadow)
+.avatar {
+  width:29px;height:29px;border-radius:50%;
+  display:grid;place-items:center;
+  background:var(--coral-soft);color:var(--coral);
+  font-weight:900;font-size:12px;
 }
-.stat strong{display:block;font-size:23px;margin-bottom:4px}
-.stat span{font-size:11px;color:var(--muted)}
-.section-head{
-display:flex;align-items:center;justify-content:space-between;
-gap:10px;margin:23px 2px 11px
+.main {max-width:1100px;margin:auto;padding:8px 24px 30px}
+.page-heading {
+  display:flex;justify-content:space-between;align-items:flex-end;
+  gap:15px;margin:15px 0 24px;
 }
-.section-head h2{margin:0}
-label{display:block;font-size:12px;font-weight:750;color:var(--muted);margin:12px 0 6px}
-input,select,textarea{
-width:100%;padding:12px;border:1px solid var(--border);
-border-radius:12px;background:var(--bg);color:var(--ink);outline:none
+.page-heading h1 {
+  font-size:clamp(27px,5vw,39px);
+  line-height:1.08;letter-spacing:-1.6px;
+  margin:7px 0 5px;font-weight:850;
 }
-input:focus,select:focus,textarea:focus{border-color:var(--teal)}
-textarea{min-height:75px;resize:vertical}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.row{display:flex;align-items:center;gap:12px}
-.between{justify-content:space-between}
-.grow{flex:1;min-width:0}
-.pill{
-display:inline-block;padding:5px 10px;border-radius:20px;
-font-size:11px;font-weight:750;background:var(--surface);color:var(--muted)
+.page-heading p {margin:0;color:var(--muted);font-size:13px}
+.section {margin:27px 0}
+.section-head {
+  display:flex;justify-content:space-between;align-items:center;
+  gap:12px;margin-bottom:13px;
 }
-.pending,.partial{background:var(--gold-light);color:var(--gold)}
-.approved{background:var(--green-light);color:var(--green)}
-.rejected{background:var(--coral-light);color:var(--red)}
-.points{font-weight:800;color:var(--gold);white-space:nowrap}
-.member-row{padding:12px 0;border-bottom:1px solid var(--border)}
-.member-row:last-child{border:0}
-.empty{
-color:var(--muted);font-size:14px;padding:18px;
-text-align:center;border:1px dashed var(--border);
-border-radius:15px
+.section-head h2 {font-size:17px;letter-spacing:-.4px;margin:0}
+.section-head span {font-size:11px;color:var(--muted)}
+.grid {display:grid;gap:13px}
+.grid-2 {grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-3 {grid-template-columns:repeat(3,minmax(0,1fr))}
+.card {
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--radius);padding:19px;
+  box-shadow:var(--shadow);
+  min-width:0;
 }
-.hidden{display:none!important}
-hr{border:0;border-top:1px solid var(--border);margin:16px 0}
-.big-number{font-size:30px;font-weight:800;margin:8px 0;color:var(--green)}
-.nav{
-position:fixed;bottom:0;left:0;right:0;display:flex;
-justify-content:space-around;background:var(--card);
-border-top:1px solid var(--border);
-padding:8px 4px max(8px,env(safe-area-inset-bottom));
-z-index:10;backdrop-filter:blur(12px)
+.card h3 {font-size:15px;margin:0 0 6px;letter-spacing:-.3px}
+.card p {margin:0;color:var(--muted);font-size:12px}
+.hero {
+  position:relative;overflow:hidden;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:28px;padding:27px;
+  box-shadow:var(--shadow);
 }
-.nav button{
-background:transparent;color:var(--muted);padding:7px 3px;
-min-width:0;flex:1;display:flex;flex-direction:column;
-align-items:center;gap:3px;font-size:19px;border-radius:12px
+.hero:after {
+  content:"";position:absolute;
+  width:190px;height:190px;border-radius:50%;
+  right:-60px;top:-85px;
+  background:var(--coral-soft);
+  opacity:.9;
 }
-.nav button small{font-size:10px;font-weight:650}
-.nav button.active{background:var(--green-light);color:var(--green)}
-.theme-toggle{
-width:40px;height:40px;padding:0;border-radius:13px;
-background:var(--surface);color:var(--ink);font-size:19px
+.hero-content {position:relative;z-index:1;max-width:600px}
+.hero h1 {font-size:clamp(29px,6vw,45px);line-height:1.05;letter-spacing:-1.8px;margin:10px 0}
+.hero p {color:var(--muted);font-size:13px;margin:0 0 18px}
+.hero .hero-tag {
+  display:inline-flex;padding:6px 10px;border-radius:30px;
+  background:var(--sage-soft);color:var(--sage);
+  font-size:10px;font-weight:800;letter-spacing:1px;
 }
-.theme-choice{display:flex;gap:8px}
-.theme-choice button{flex:1}
-.notice{
-padding:12px 14px;border-radius:13px;background:var(--gold-light);
-color:var(--gold);font-size:13px;line-height:1.5;margin:12px 0
+.stat-card {padding:18px;min-height:120px}
+.stat-top {display:flex;justify-content:space-between;align-items:center}
+.stat-icon {
+  width:35px;height:35px;border-radius:12px;
+  display:grid;place-items:center;font-size:17px;
 }
-#message{
-position:fixed;top:14px;left:12px;right:12px;max-width:500px;
-margin:auto;z-index:30;padding:13px 16px;border-radius:13px;
-background:var(--ink);color:var(--card);box-shadow:var(--shadow);
-display:none;font-size:13px
+.stat-value {font-size:30px;font-weight:850;letter-spacing:-1.3px;margin-top:13px}
+.stat-label {font-size:11px;color:var(--muted);font-weight:650}
+.coral {background:var(--coral-soft);color:var(--coral)}
+.sage {background:var(--sage-soft);color:var(--sage)}
+.lilac {background:var(--lilac-soft);color:var(--lilac)}
+.blue {background:var(--blue-soft);color:var(--blue)}
+.mustard {background:var(--mustard-soft);color:var(--mustard)}
+.btn {
+  border:0;border-radius:14px;padding:11px 16px;
+  font-size:12px;font-weight:800;
+  background:var(--text);color:var(--surface);
+  transition:transform .15s,opacity .15s;
 }
-#login{max-width:440px;margin:35px auto;padding:16px}
-#login .card{padding:24px}
-.rank-number{
-width:36px;height:36px;border-radius:12px;
-display:grid;place-items:center;background:var(--green-light);
-color:var(--green);font-weight:800
+.btn:active {transform:scale(.97)}
+.btn-primary {background:var(--coral);color:white}
+.btn-soft {background:var(--coral-soft);color:var(--coral)}
+.btn-neutral {background:var(--surface-2);color:var(--text)}
+.btn-danger {background:#b95d58;color:white}
+.btn-small {padding:8px 11px;font-size:11px;border-radius:11px}
+.btn-row {display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.form-card {max-width:650px}
+.field {margin:13px 0}
+.field label {
+  display:block;font-size:11px;font-weight:800;
+  margin-bottom:6px;color:var(--muted);
 }
-@media(min-width:650px){
-.nav{position:static;margin:10px auto;border:1px solid var(--border);border-radius:16px}
-.nav button{flex-direction:row;justify-content:center;gap:7px}
-main{padding-bottom:35px}
-.welcome{padding:30px}
-.welcome h2{font-size:30px}
+.field input,.field select,.field textarea {
+  width:100%;border:1px solid var(--line);
+  background:var(--bg);color:var(--text);
+  border-radius:13px;padding:12px 13px;outline:none;
+}
+.field input:focus,.field select:focus,.field textarea:focus {
+  border-color:var(--coral);
+  box-shadow:0 0 0 3px var(--coral-soft);
+}
+.field textarea {min-height:75px;resize:vertical}
+.task-card {position:relative;overflow:hidden}
+.task-card:before {
+  content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:var(--task-color,var(--sage));
+}
+.task-top {display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.task-title {font-size:14px;font-weight:800}
+.task-description {font-size:12px;color:var(--muted);margin-top:5px}
+.points {
+  white-space:nowrap;padding:6px 9px;border-radius:20px;
+  background:var(--mustard-soft);color:var(--mustard);
+  font-size:11px;font-weight:900;
+}
+.pill {
+  display:inline-flex;align-items:center;
+  padding:5px 9px;border-radius:20px;
+  font-size:10px;font-weight:800;
+  background:var(--surface-2);color:var(--muted);
+}
+.pill.pending {background:var(--mustard-soft);color:var(--mustard)}
+.pill.approved {background:var(--sage-soft);color:var(--sage)}
+.pill.rejected {background:var(--coral-soft);color:var(--coral)}
+.pill.partial {background:var(--lilac-soft);color:var(--lilac)}
+.task-meta {display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:12px}
+.task-actions {display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
+.progress {
+  height:8px;background:var(--surface-2);
+  border-radius:20px;overflow:hidden;margin-top:11px;
+}
+.progress > span {
+  display:block;height:100%;border-radius:20px;
+  background:var(--coral);transition:width .3s;
+}
+.list-row {
+  display:flex;justify-content:space-between;align-items:center;
+  gap:12px;padding:13px 0;border-bottom:1px solid var(--line);
+}
+.list-row:last-child {border-bottom:0}
+.list-main {min-width:0}
+.list-main strong {font-size:13px;display:block}
+.list-main small {font-size:11px;color:var(--muted)}
+.score {
+  font-size:18px;font-weight:900;letter-spacing:-.5px;
+  white-space:nowrap;
+}
+.rank-number {
+  width:32px;height:32px;border-radius:11px;
+  display:grid;place-items:center;
+  background:var(--surface-2);font-weight:900;font-size:12px;
+}
+.bottom-nav {
+  position:fixed;bottom:0;left:0;right:0;z-index:20;
+  padding:9px 10px calc(9px + env(safe-area-inset-bottom));
+  background:color-mix(in srgb,var(--surface) 94%,transparent);
+  backdrop-filter:blur(18px);
+  border-top:1px solid var(--line);
+}
+.nav-inner {
+  max-width:680px;margin:auto;
+  display:flex;justify-content:space-around;gap:4px;
+}
+.nav-item {
+  border:0;background:transparent;color:var(--muted);
+  display:flex;flex-direction:column;align-items:center;
+  gap:4px;padding:7px 10px;border-radius:14px;
+  font-size:9px;font-weight:800;min-width:54px;
+}
+.nav-item .nav-icon {font-size:19px;line-height:1}
+.nav-item.active {background:var(--coral-soft);color:var(--coral)}
+.empty {
+  text-align:center;padding:28px 15px;color:var(--muted);
+}
+.empty-icon {font-size:28px;margin-bottom:8px}
+.toast {
+  position:fixed;left:50%;bottom:95px;z-index:50;
+  transform:translate(-50%,20px);
+  background:var(--text);color:var(--surface);
+  padding:12px 17px;border-radius:14px;
+  font-size:12px;font-weight:700;
+  opacity:0;pointer-events:none;transition:.2s;
+  max-width:90%;text-align:center;
+}
+.toast.show {opacity:1;transform:translate(-50%,0)}
+.login-screen {
+  min-height:100vh;display:grid;place-items:center;padding:22px;
+}
+.login-card {
+  width:100%;max-width:420px;background:var(--surface);
+  border:1px solid var(--line);border-radius:28px;
+  padding:30px;box-shadow:var(--shadow);
+}
+.login-logo {
+  width:54px;height:54px;border-radius:18px;
+  display:grid;place-items:center;background:var(--coral);
+  color:white;font-size:26px;margin-bottom:23px;
+}
+.login-card h1 {font-size:29px;letter-spacing:-1px;margin:0 0 5px}
+.login-card > p {color:var(--muted);font-size:13px;margin:0 0 22px}
+.loading {padding:50px;text-align:center;color:var(--muted)}
+.spinner {
+  width:25px;height:25px;border:3px solid var(--line);
+  border-top-color:var(--coral);border-radius:50%;
+  animation:spin .7s linear infinite;margin:0 auto 12px;
+}
+@keyframes spin {to{transform:rotate(360deg)}}
+hr {border:0;border-top:1px solid var(--line);margin:18px 0}
+.notice {
+  padding:12px 14px;border-radius:14px;
+  background:var(--blue-soft);color:var(--blue);
+  font-size:11px;margin:12px 0;
+}
+@media(max-width:650px) {
+  .topbar {padding:15px 16px 10px}
+  .main {padding:7px 16px 25px}
+  .brand-name {font-size:15px}
+  .user-chip {padding:6px 9px 6px 6px}
+  .grid-3 {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hero {padding:22px}
+  .card {padding:16px;border-radius:19px}
+  .stat-card {min-height:108px}
+  .page-heading {margin:12px 0 20px}
+  .nav-item {min-width:0;flex:1;padding:8px 3px}
+}
+@media(max-width:370px) {
+  .grid-2,.grid-3 {grid-template-columns:1fr}
+  .user-chip span:last-child {display:none}
 }
 </style>
 </head>
+
 <body>
-<div id="message"></div>
-
-<div id="login" class="hidden">
- <div class="card">
-  <div class="brand">
-   <div class="logo">C</div>
-   <div><h1>CASA CLUB</h1><div class="tagline">La casa è una squadra. Ogni gesto conta.</div></div>
-  </div>
-  <hr>
-  <h2>Benvenuto!</h2>
-  <form id="loginForm">
-   <label>Email</label>
-   <input id="email" type="email" autocomplete="username" required>
-   <label>Password</label>
-   <input id="password" type="password" autocomplete="current-password" required>
-   <div class="actions"><button type="submit" id="loginButton">Accedi</button></div>
-   <p class="sub">Accedi con il tuo account familiare.</p>
-  </form>
- </div>
+<div id="root">
+  <div class="loading"><div class="spinner"></div>Caricamento CASA CLUB…</div>
 </div>
-
-<div id="application" class="hidden">
- <header>
-  <div class="header-row">
-   <div class="brand">
-    <div class="logo">C</div>
-    <div><h1>CASA CLUB</h1><div class="tagline">La casa è una squadra. Ogni gesto conta.</div></div>
-   </div>
-   <div class="header-actions">
-    <button class="theme-toggle" id="themeToggle" title="Cambia tema" aria-label="Cambia tema">◐</button>
-   </div>
-  </div>
- </header>
-
- <nav class="nav" id="navigation">
-  <button data-tab="home" class="active">⌂<small>Casa</small></button>
-  <button data-tab="tasks">✓<small>Faccende</small></button>
-  <button data-tab="reviews">▣<small>Conferme</small></button>
-  <button data-tab="ranking">♛<small>Classifica</small></button>
-  <button data-tab="rewards">◇<small>Premi</small></button>
-  <button data-tab="settings">⚙<small>Altro</small></button>
- </nav>
- <main id="app"></main>
-</div>
+<div id="toast" class="toast"></div>
 
 <script>
-'use strict';
+const SUPABASE_URL = "https://bdftsbhfomlowpoxihgp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_yNVMFohrVcCdPm_tMkIj2Q_xJM8eS5C";
+const FAMILY_ID = "034db486-32d2-4919-8f5c-596d7c2b787a";
 
-const SUPABASE_URL='https://bdftsbhfomlowpoxihgp.supabase.co';
-const SUPABASE_KEY='sb_publishable_yNVMFohrVcCdPm_tMkIj2Q_xJM8eS5C';
-const FAMILY_ID='034db486-32d2-4919-8f5c-596d7c2b787a';
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let session=null,currentMember=null,members=[],tasks=[],completions=[],rewards=[],ledger=[];
-let currentTab='home',busy=false,refreshTimer=null;
-let theme=localStorage.getItem('casa-club-theme')||'light';
-document.documentElement.dataset.theme=theme;
+let session = null;
+let me = null;
+let familyMembers = [];
+let tasks = [];
+let completions = [];
+let rewards = [];
+let ledger = [];
+let currentPage = "home";
+let loading = false;
+let editingTask = null;
+let editingReward = null;
+let refreshTimer = null;
 
-const $=id=>document.getElementById(id);
+const root = document.getElementById("root");
 
-function esc(value){
- return String(value??'').replace(/[&<>"']/g,c=>({
- '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
- })[c]);
-}
-function notify(message){
- const box=$('message');box.textContent=message;box.style.display='block';
- clearTimeout(notify.timer);notify.timer=setTimeout(()=>box.style.display='none',3500);
-}
-function setTheme(value){
- theme=value;localStorage.setItem('casa-club-theme',value);
- document.documentElement.dataset.theme=value;
-}
-function isAdult(){return currentMember?.role==='adult';}
-function memberName(id){return members.find(m=>m.id===id)?.display_name||'Membro';}
-function memberById(id){return members.find(m=>m.id===id)||null;}
-function taskById(id){return tasks.find(t=>t.id===id)||null;}
-function rewardById(id){return rewards.find(r=>r.id===id)||null;}
-function pointsBalance(memberId){
- return ledger.filter(x=>x.member_id===memberId).reduce((sum,x)=>{
-  const n=Number(x.points)||0;
-  if(x.entry_type==='earn')return sum+n;
-  if(x.entry_type==='redeem')return sum-n;
-  if(x.entry_type==='adjustment')return sum+n;
-  return sum;
- },0);
-}
-function statusLabel(status){
- return {pending:'In attesa',approved:'Approvata',partial:'Da completare',rejected:'Rifiutata'}[status]||status;
+const categories = {
+  cucina:"Cucina",
+  pulizie:"Pulizie",
+  ordine:"Ordine",
+  bucato:"Bucato",
+  spesa:"Spesa",
+  cura:"Cura della casa",
+  altro:"Altro"
+};
+
+function esc(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
 }
 
-function showLogin(){
- $('application').classList.add('hidden');$('login').classList.remove('hidden');
-}
-function showApplication(){
- $('login').classList.add('hidden');$('application').classList.remove('hidden');
-}
-async function login(event){
- event.preventDefault();
- const button=$('loginButton');button.disabled=true;button.textContent='Accesso...';
- try{
-  const {data,error}=await db.auth.signInWithPassword({
-   email:$('email').value.trim(),password:$('password').value
-  });
-  if(error)throw error;
-  session=data.session;await initialize();
- }catch(error){notify('Accesso non riuscito: '+error.message);}
- finally{button.disabled=false;button.textContent='Accedi';}
-}
-async function logout(){
- stopRefresh();
- const {error}=await db.auth.signOut();
- if(error){notify(error.message);return;}
- session=null;currentMember=null;showLogin();
-}
-async function checkSession(){
- const {data,error}=await db.auth.getSession();
- if(error)throw error;
- session=data.session;
- if(session)await initialize();else showLogin();
+function toast(message) {
+  const el = document.getElementById("toast");
+  el.textContent = message;
+  el.classList.add("show");
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(()=>el.classList.remove("show"),2800);
 }
 
-async function initialize(){
- showApplication();$('app').innerHTML='<div class="card">Caricamento CASA CLUB...</div>';
- try{
-  const {data,error}=await db.from('members').select('*').eq('family_id',FAMILY_ID);
-  if(error)throw error;
-  members=data||[];
-  currentMember=members.find(m=>m.auth_user_id===session.user.id);
-  if(!currentMember)throw new Error('Account non associato alla famiglia CASA CLUB.');
-  await loadData();render();startRefresh();
- }catch(error){
-  $('app').innerHTML='<div class="card"><h2>Errore</h2><p>'+esc(error.message)+'</p><button id="retry">Riprova</button></div>';
-  $('retry').onclick=initialize;
- }
-}
-async function loadData(){
- const results=await Promise.all([
-  db.from('tasks').select('*').eq('family_id',FAMILY_ID).order('created_at',{ascending:false}),
-  db.from('completions').select('*').eq('family_id',FAMILY_ID).order('submitted_at',{ascending:false}),
-  db.from('rewards').select('*').eq('family_id',FAMILY_ID).order('created_at',{ascending:false}),
-  db.from('points_ledger').select('*').eq('family_id',FAMILY_ID).order('created_at',{ascending:false})
- ]);
- const labels=['attività','conferme','premi','punti'];
- results.forEach((r,i)=>{if(r.error)throw new Error('Errore caricamento '+labels[i]+': '+r.error.message);});
- tasks=results[0].data||[];completions=results[1].data||[];
- rewards=results[2].data||[];ledger=results[3].data||[];
-}
-async function refreshData(){
- if(busy||!session)return;
- try{await loadData();render();}catch(error){notify('Aggiornamento non riuscito: '+error.message);}
-}
-function startRefresh(){stopRefresh();refreshTimer=setInterval(refreshData,30000);}
-function stopRefresh(){if(refreshTimer)clearInterval(refreshTimer);refreshTimer=null;}
-
-$('themeToggle').addEventListener('click',()=>{
- setTheme(theme==='light'?'dark':'light');
-});
-$('navigation').addEventListener('click',event=>{
- const button=event.target.closest('[data-tab]');if(!button)return;
- currentTab=button.dataset.tab;render();
-});
-
-function render(){
- if(!currentMember)return;
- document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===currentTab));
- const pages={home:renderHome,tasks:renderTasksPage,reviews:renderReviewsPage,ranking:renderRankingPage,rewards:renderRewardsPage,settings:renderSettingsPage};
- $('app').innerHTML=pages[currentTab]();
-}
-function headerCard(){
- return `<div class="welcome">
-  <div class="eyebrow">Benvenuto in CASA CLUB</div>
-  <h2>Ciao, ${esc(currentMember.display_name)}.</h2>
-  <p>Ogni piccolo gesto contribuisce a una casa più serena. La squadra funziona quando ognuno fa la sua parte.</p>
- </div>
- <div class="stats">
-  <div class="stat"><strong>${pointsBalance(currentMember.id)}</strong><span>I tuoi punti</span></div>
-  <div class="stat"><strong>${completions.filter(c=>c.performed_by===currentMember.id&&c.status==='approved').length}</strong><span>Attività approvate</span></div>
-  <div class="stat"><strong>${completions.filter(c=>c.status==='pending'&&c.reviewer_member_id===currentMember.id).length}</strong><span>Da confermare</span></div>
- </div>`;
-}
-function myCompletions(){return completions.filter(c=>c.performed_by===currentMember.id);}
-function renderHome(){
- const recent=completions.slice(0,5);
- const available=tasks.filter(t=>t.is_active&&t.target_type===currentMember.role&&(!t.assigned_member_id||t.assigned_member_id===currentMember.id));
- return headerCard()+`
- <div class="section-head"><h2>Le tue faccende</h2><button class="btn-secondary btn-small" data-tab="tasks">Vedi tutte</button></div>
- ${available.slice(0,3).map(taskCard).join('')||'<div class="empty">Non ci sono attività disponibili.</div>'}
- <div class="section-head"><h2>La nostra squadra</h2></div>
- <div class="card">${members.map(m=>`<div class="member-row row between"><strong>${esc(m.display_name)}</strong><strong>${pointsBalance(m.id)} punti</strong></div>`).join('')}</div>
- <div class="section-head"><h2>Ultimi aggiornamenti</h2></div>
- <div class="card">${recent.map(completionCard).join('')||'<p class="empty">Nessuna attività registrata.</p>'}</div>`;
-}
-function taskCard(t){
- const pending=completions.some(c=>c.task_id===t.id&&c.performed_by===currentMember.id&&c.status==='pending');
- return `<div class="card">
-  <div class="row between"><div class="grow"><h3>${esc(t.title)}</h3><p class="sub">${esc(t.description||'')}</p><span class="pill">${esc(t.category||'Generale')}</span></div><span class="points">+${Number(t.points)||0} pt</span></div>
-  <div class="actions"><button data-action="submit-task" data-id="${t.id}" ${pending?'disabled':''}>${pending?'In attesa':'Ho completato'}</button></div>
- </div>`;
-}
-function renderTasksPage(){
- const available=tasks.filter(t=>t.is_active&&t.target_type===currentMember.role&&(!t.assigned_member_id||t.assigned_member_id===currentMember.id));
- return headerCard()+`<div class="section-head"><h2>Faccende di casa</h2><span class="pill">${available.length} attività</span></div>
- <p class="sub">Scegli un'attività e inviala per la conferma dell'altro adulto.</p>
- ${available.map(taskCard).join('')||'<div class="empty">Nessuna attività disponibile.</div>'}
- <div class="section-head"><h2>Le mie attività inviate</h2></div>
- <div class="card">${myCompletions().map(c=>`<div class="member-row">
-  <div class="row between"><strong>${esc(taskById(c.task_id)?.title||'Attività')}</strong><span class="pill ${c.status}">${statusLabel(c.status)}</span></div>
-  ${c.status==='partial'?`<div class="actions"><button data-action="resubmit" data-id="${c.id}">Invia nuovamente</button></div>`:''}
- </div>`).join('')||'<p class="empty">Nessuna attività inviata.</p>'}</div>`;
-}
-async function submitTask(taskId){
- const task=taskById(taskId);
- if(!task||!task.is_active){notify('Attività non disponibile.');return;}
- if(task.target_type!==currentMember.role){notify('Attività non destinata al tuo profilo.');return;}
- if(task.assigned_member_id&&task.assigned_member_id!==currentMember.id){notify('Attività assegnata a un altro membro.');return;}
- if(completions.some(c=>c.task_id===taskId&&c.performed_by===currentMember.id&&c.status==='pending')){notify('Questa attività è già in attesa.');return;}
- await runAction(async()=>{
-  const {error}=await db.rpc('submit_completion',{p_task_id:taskId});
-  if(error)throw error;
- },'Attività inviata per la conferma!');
+function initials(name) {
+  return (name || "?").trim().split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase();
 }
 
-function renderReviewsPage(){
- if(!isAdult())return headerCard()+'<div class="card">Solo gli adulti possono esaminare le attività.</div>';
- const pending=completions.filter(c=>c.status==='pending'&&c.reviewer_member_id===currentMember.id);
- return headerCard()+`<div class="section-head"><h2>Da esaminare</h2><span class="pill pending">${pending.length} in attesa</span></div>
- <p class="sub">Puoi confermare solo le attività assegnate a te da verificare. Non puoi approvare le tue.</p>
- ${pending.map(c=>{
-  const task=taskById(c.task_id);
-  return `<div class="card">
-   <h3>${esc(task?.title||'Attività')}</h3>
-   <p class="sub">Inviata da ${esc(memberName(c.performed_by))}</p>
-   <p>Valore: <strong>${Number(c.submitted_points??task?.points??0)} punti</strong></p>
-   <label>Nota (facoltativa)</label><textarea id="note-${c.id}" placeholder="Scrivi una nota"></textarea>
-   <div class="actions">
-    <button data-action="review" data-id="${c.id}" data-decision="approved">Approva</button>
-    <button class="btn-gold" data-action="review" data-id="${c.id}" data-decision="partial">Parziale</button>
-    <button class="btn-danger" data-action="review" data-id="${c.id}" data-decision="rejected">Rifiuta</button>
-   </div>
-  </div>`;
- }).join('')||'<div class="empty">Non hai attività da esaminare.</div>'}`;
-}
-async function reviewTask(id,decision,note){
- const completion=completions.find(c=>c.id===id);
- if(!isAdult()||!completion){notify('Operazione non consentita.');return;}
- if(completion.performed_by===currentMember.id){notify('Non puoi approvare una tua attività.');return;}
- if(completion.reviewer_member_id!==currentMember.id){notify('Questa revisione è assegnata all’altro adulto.');return;}
- await runAction(async()=>{
-  const {error}=await db.rpc('review_completion',{
-   p_completion_id:id,p_decision:decision,p_review_note:note.trim()||null
-  });
-  if(error)throw error;
- },decision==='approved'?'Attività approvata!':decision==='partial'?'Attività parziale.':'Attività rifiutata.');
-}
-async function resubmitTask(id){
- const c=completions.find(x=>x.id===id);
- if(!c||c.performed_by!==currentMember.id||c.status!=='partial'){notify('Non puoi ripresentare questa attività.');return;}
- await runAction(async()=>{
-  const {error}=await db.rpc('resubmit_completion',{p_completion_id:id});
-  if(error)throw error;
- },'Attività inviata nuovamente!');
-}
-function completionCard(c){
- const date=c.reviewed_at||c.submitted_at;
- return `<div class="member-row">
-  <div class="row between"><strong>${esc(taskById(c.task_id)?.title||'Attività')}</strong><span class="pill ${c.status}">${statusLabel(c.status)}</span></div>
-  <div class="sub">Eseguita da ${esc(memberName(c.performed_by))}</div>
-  <div class="sub">${date?new Date(date).toLocaleString('it-IT'):''}</div>
-  <div>Punti assegnati: <strong>${Number(c.awarded_points)||0}</strong></div>
-  ${c.review_note?`<div class="sub">Nota: ${esc(c.review_note)}</div>`:''}
- </div>`;
-}
-function renderRankingPage(){
- const ranking=[...members].sort((a,b)=>pointsBalance(b.id)-pointsBalance(a.id));
- return headerCard()+`<div class="section-head"><h2>Classifica familiare</h2></div>
- <div class="card">${ranking.map((m,i)=>`<div class="row between member-row">
-  <div class="row"><div class="rank-number">${i+1}</div><strong>${esc(m.display_name)}</strong></div>
-  <strong class="points">${pointsBalance(m.id)} punti</strong>
- </div>`).join('')}</div>
- <div class="section-head"><h2>Storico attività</h2></div>
- <div class="card">${completions.map(completionCard).join('')||'<p class="empty">Lo storico è ancora vuoto.</p>'}</div>
- <div class="section-head"><h2>Movimenti punti</h2></div>
- <div class="card">${ledger.slice(0,30).map(entry=>`<div class="member-row row between">
-  <div><strong>${esc(memberName(entry.member_id))}</strong><div class="sub">${esc(entry.note||entry.entry_type)}</div></div>
-  <strong>${entry.entry_type==='redeem'?'-':'+'}${Number(entry.points)||0}</strong>
- </div>`).join('')||'<p class="empty">Nessun movimento registrato.</p>'}</div>`;
-}
-function renderRewardsPage(){
- const available=rewards.filter(r=>r.is_active&&r.target_type===currentMember.role);
- return headerCard()+`<div class="section-head"><h2>Premi disponibili</h2></div>
- <p class="sub">Accumula punti e scegli insieme alla famiglia come festeggiare i traguardi.</p>
- ${available.map(r=>`<div class="card">
-  <div class="row between"><h3>${esc(r.title)}</h3><span class="points">${Number(r.points_cost)||0} pt</span></div>
-  <p>${esc(r.description||'')}</p>
-  <button class="btn-secondary" disabled>Riscatto non ancora disponibile</button>
- </div>`).join('')||'<div class="empty">Nessun premio disponibile per il tuo profilo.</div>'}
- <div class="notice">Il catalogo è attivo. La richiesta e la gestione dei riscatti non sono ancora attivate in questa versione.</div>`;
+function memberName(id) {
+  return familyMembers.find(m=>m.id===id)?.display_name || "Familiare";
 }
 
-function renderSettingsPage(){
- return headerCard()+`
- <div class="card">
-  <h2>Il tuo account</h2><p><strong>${esc(currentMember.display_name)}</strong></p>
-  <p class="sub">${esc(session.user.email||'')}</p><p class="sub">Ruolo: ${esc(currentMember.role)}</p>
-  <hr><h3>Componenti della famiglia</h3>
-  ${members.map(m=>`<div class="member-row row between"><strong>${esc(m.display_name)}</strong><span class="pill">${esc(m.role)}</span></div>`).join('')}
- </div>
- <div class="card">
-  <h2>Aspetto</h2><p class="sub">La preferenza viene salvata solo su questo dispositivo.</p>
-  <div class="theme-choice">
-   <button class="${theme==='light'?'':'btn-secondary'}" data-action="theme-light">Chiaro</button>
-   <button class="${theme==='dark'?'':'btn-secondary'}" data-action="theme-dark">Scuro</button>
-  </div>
- </div>
- ${isAdult()?`
- <div class="card">
-  <h2>Nuova attività</h2>
-  <form id="taskForm">
-   <label>Nome</label><input name="title" required maxlength="120">
-   <label>Categoria</label><input name="category">
-   <label>Descrizione</label><textarea name="description"></textarea>
-   <label>Punti</label><input name="points" type="number" min="0" value="10" required>
-   <label>Destinatari</label><select name="target_type"><option value="adult">Adulti</option><option value="child">Bambini</option></select>
-   <label>Assegna a (facoltativo)</label>
-   <select name="assigned_member_id"><option value="">Tutti i destinatari</option>
-    ${members.map(m=>`<option value="${m.id}">${esc(m.display_name)} (${esc(m.role)})</option>`).join('')}
-   </select>
-   <div class="actions"><button type="submit">Crea attività</button></div>
-  </form>
- </div>
- <div class="card">
-  <h2>Gestione attività</h2>
-  ${tasks.map(t=>`<div class="member-row">
-   <div class="row between"><strong>${esc(t.title)}</strong><span class="pill">${t.is_active?'Attiva':'Disattivata'}</span></div>
-   <div class="sub">${esc(t.target_type)} · ${Number(t.points)||0} punti</div>
-   <div class="actions">
-    <button class="btn-secondary btn-small" data-action="edit-task" data-id="${t.id}">Modifica</button>
-    <button class="btn-small" data-action="toggle-task" data-id="${t.id}" data-active="${!t.is_active}">${t.is_active?'Disattiva':'Riattiva'}</button>
-   </div>
-  </div>`).join('')}
- </div>
- <div class="card">
-  <h2>Nuovo premio</h2>
-  <form id="rewardForm">
-   <label>Nome</label><input name="title" required maxlength="120">
-   <label>Descrizione</label><textarea name="description"></textarea>
-   <label>Costo in punti</label><input name="points_cost" type="number" min="0" value="50" required>
-   <label>Destinatari</label><select name="target_type"><option value="adult">Adulti</option><option value="child">Bambini</option></select>
-   <div class="actions"><button type="submit">Crea premio</button></div>
-  </form>
- </div>
- <div class="card">
-  <h2>Gestione premi</h2>
-  ${rewards.map(r=>`<div class="member-row">
-   <div class="row between"><strong>${esc(r.title)}</strong><span class="pill">${r.is_active?'Attivo':'Disattivato'}</span></div>
-   <div class="sub">${Number(r.points_cost)||0} punti · ${esc(r.target_type)}</div>
-   <div class="actions">
-    <button class="btn-secondary btn-small" data-action="edit-reward" data-id="${r.id}">Modifica</button>
-    <button class="btn-small" data-action="toggle-reward" data-id="${r.id}" data-active="${!r.is_active}">${r.is_active?'Disattiva':'Riattiva'}</button>
-   </div>
-  </div>`).join('')}
- </div>`:''}
- <div class="card">
-  <h2>Sessione</h2><button class="btn-danger" data-action="logout">Esci da CASA CLUB</button>
- </div>
- <div class="notice">In questa versione sono disponibili attività, conferme, punti, classifica e catalogo premi. Riscatti, obiettivi, medaglie e combo non sono ancora collegati all'interfaccia.</div>`;
+function moneyPoints(value) {
+  return `${Number(value || 0)} pt`;
 }
 
-// RPC SUPABASE
-async function createTask(data){
- const {error}=await db.rpc('create_task',{
-  p_title:data.title,p_category:data.category||null,
-  p_description:data.description||null,p_points:Number(data.points),
-  p_target_type:data.target_type,p_assigned_member_id:data.assigned_member_id||null
- });
- if(error)throw error;
-}
-async function updateTask(id,data){
- const {error}=await db.rpc('update_task',{
-  p_task_id:id,p_title:data.title,p_category:data.category||null,
-  p_description:data.description||null,p_points:Number(data.points),
-  p_assigned_member_id:data.assigned_member_id||null
- });
- if(error)throw error;
-}
-async function setTaskActive(id,active){
- const {error}=await db.rpc('set_task_active',{p_task_id:id,p_is_active:active});
- if(error)throw error;
-}
-async function createReward(data){
- const {error}=await db.rpc('create_reward',{
-  p_title:data.title,p_description:data.description||null,
-  p_points_cost:Number(data.points_cost),p_target_type:data.target_type
- });
- if(error)throw error;
-}
-async function updateReward(id,data){
- const {error}=await db.rpc('update_reward',{
-  p_reward_id:id,p_title:data.title,p_description:data.description||null,
-  p_points_cost:Number(data.points_cost)
- });
- if(error)throw error;
-}
-async function setRewardActive(id,active){
- const {error}=await db.rpc('set_reward_active',{p_reward_id:id,p_is_active:active});
- if(error)throw error;
-}
-async function runAction(action,successMessage){
- if(busy)return false;
- busy=true;
- try{
-  await action();await loadData();render();
-  if(successMessage)notify(successMessage);
-  return true;
- }catch(error){
-  console.error(error);notify('Operazione non riuscita: '+error.message);return false;
- }finally{busy=false;}
+function setTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  localStorage.setItem("casa-club-theme",theme);
+  const button = document.getElementById("themeToggle");
+  if(button) button.textContent = theme === "dark" ? "☀" : "☾";
 }
 
-// EVENTI PULSANTI
-$('app').addEventListener('click',async event=>{
- const button=event.target.closest('[data-action]');if(!button)return;
- const action=button.dataset.action,id=button.dataset.id;
- if(action==='logout'){await logout();return;}
- if(action==='theme-light'){setTheme('light');render();return;}
- if(action==='theme-dark'){setTheme('dark');render();return;}
- if(action==='submit-task'){await submitTask(id);return;}
- if(action==='resubmit'){await resubmitTask(id);return;}
- if(action==='review'){
-  const note=$('note-'+id)?.value||'';
-  await reviewTask(id,button.dataset.decision,note);return;
- }
- if(action==='toggle-task'){
-  await runAction(()=>setTaskActive(id,button.dataset.active==='true'),
-   button.dataset.active==='true'?'Attività riattivata.':'Attività disattivata.');return;
- }
- if(action==='toggle-reward'){
-  await runAction(()=>setRewardActive(id,button.dataset.active==='true'),
-   button.dataset.active==='true'?'Premio riattivato.':'Premio disattivato.');return;
- }
- if(action==='edit-task'){
-  const t=taskById(id);if(!t)return;
-  const title=prompt('Nome attività:',t.title);if(title===null)return;
-  const category=prompt('Categoria:',t.category||'');if(category===null)return;
-  const description=prompt('Descrizione:',t.description||'');if(description===null)return;
-  const points=prompt('Punti:',t.points);
-  if(points===null||!Number.isFinite(Number(points))||Number(points)<0){notify('Numero di punti non valido.');return;}
-  await runAction(()=>updateTask(id,{title,category,description,points,assigned_member_id:t.assigned_member_id}),'Attività aggiornata.');return;
- }
- if(action==='edit-reward'){
-  const r=rewardById(id);if(!r)return;
-  const title=prompt('Nome premio:',r.title);if(title===null)return;
-  const description=prompt('Descrizione:',r.description||'');if(description===null)return;
-  const points=prompt('Costo in punti:',r.points_cost);
-  if(points===null||!Number.isFinite(Number(points))||Number(points)<0){notify('Costo non valido.');return;}
-  await runAction(()=>updateReward(id,{title,description,points_cost:points}),'Premio aggiornato.');
- }
-});
+function toggleTheme() {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  setTheme(next);
+}
 
-// EVENTI MODULI
-$('app').addEventListener('submit',async event=>{
- event.preventDefault();
- const form=event.target,data=Object.fromEntries(new FormData(form).entries());
- if(form.id==='taskForm'){
-  if(!data.title.trim()||!Number.isFinite(Number(data.points))||Number(data.points)<0){notify('Controlla il nome e i punti.');return;}
-  if(data.assigned_member_id){
-   const selected=memberById(data.assigned_member_id);
-   if(!selected||selected.role!==data.target_type){notify('Il membro assegnato deve avere il ruolo corretto.');return;}
+setTheme(localStorage.getItem("casa-club-theme") || "light");
+
+async function runAction(action, successMessage) {
+  try {
+    loading = true;
+    await action();
+    if(successMessage) toast(successMessage);
+    await loadData();
+  } catch(error) {
+    console.error(error);
+    toast(error.message || "Si è verificato un errore");
+  } finally {
+    loading = false;
   }
-  await runAction(()=>createTask(data),'Attività creata.');return;
- }
- if(form.id==='rewardForm'){
-  if(!data.title.trim()||!Number.isFinite(Number(data.points_cost))||Number(data.points_cost)<0){notify('Controlla il nome e il costo.');return;}
-  await runAction(()=>createReward(data),'Premio creato.');
- }
+}
+
+async function loadData() {
+  if(!session || !me) return;
+
+  const [t,c,r,l,m] = await Promise.all([
+    db.from("tasks").select("*").eq("family_id",FAMILY_ID).order("created_at",{ascending:false}),
+    db.from("completions").select("*").eq("family_id",FAMILY_ID).order("submitted_at",{ascending:false}),
+    db.from("rewards").select("*").eq("family_id",FAMILY_ID).order("created_at",{ascending:false}),
+    db.from("points_ledger").select("*").eq("family_id",FAMILY_ID).order("created_at",{ascending:false}),
+    db.from("members").select("*").eq("family_id",FAMILY_ID)
+  ]);
+
+  for(const result of [t,c,r,l,m]) {
+    if(result.error) throw result.error;
+  }
+
+  tasks = t.data || [];
+  completions = c.data || [];
+  rewards = r.data || [];
+  ledger = l.data || [];
+  familyMembers = m.data || [];
+
+  render();
+}
+
+async function loadMember() {
+  const {data,error} = await db.from("members")
+    .select("*").eq("auth_user_id",session.user.id)
+    .eq("family_id",FAMILY_ID).maybeSingle();
+
+  if(error) throw error;
+  if(!data) throw new Error("Questo account non risulta associato a CASA CLUB.");
+  me = data;
+}
+
+function balance(memberId) {
+  return ledger.filter(x=>x.member_id===memberId)
+    .reduce((sum,x)=>sum+Number(x.points || 0),0);
+}
+
+function myPending() {
+  return completions.filter(c=>c.status==="pending" && c.reviewer_member_id===me.id);
+}
+
+function myTasks() {
+  return tasks.filter(t=>t.is_active && t.target_type===me.role &&
+    (!t.assigned_member_id || t.assigned_member_id===me.id));
+}
+
+function pageTitle() {
+  return {
+    home:["Bentornato","La casa è una squadra. Ogni gesto conta."],
+    tasks:["Le faccende","Piccoli gesti, grandi risultati."],
+    reviews:["Da confermare","Ogni contributo merita attenzione."],
+    ranking:["La classifica","Una squadra, tanti piccoli traguardi."],
+    rewards:["I premi","I punti diventano momenti speciali."],
+    settings:["Impostazioni","Gestisci CASA CLUB."]
+  }[currentPage];
+}
+
+function render() {
+  if(!session || !me) return renderLogin();
+
+  const [title,subtitle] = pageTitle();
+
+  root.innerHTML = `
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">⌂</div>
+          <div>
+            <div class="brand-name">CASA CLUB</div>
+            <div class="brand-sub">LA CASA È UNA SQUADRA</div>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button class="icon-btn" id="themeToggle" aria-label="Cambia tema" onclick="toggleTheme()">☾</button>
+          <div class="user-chip">
+            <div class="avatar">${esc(initials(me.display_name))}</div>
+            <span>${esc(me.display_name)}</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="main">
+        <div class="page-heading">
+          <div>
+            <div class="eyebrow">CASA CLUB / ${esc(title)}</div>
+            <h1>${esc(title)}</h1>
+            <p>${esc(subtitle)}</p>
+          </div>
+        </div>
+        <div id="pageContent">${renderPage()}</div>
+      </main>
+
+      <nav class="bottom-nav">
+        <div class="nav-inner">
+          ${navItem("home","⌂","Home")}
+          ${navItem("tasks","✳","Faccende")}
+          ${navItem("reviews","✓","Conferme",myPending().length)}
+          ${navItem("ranking","↗","Classifica")}
+          ${navItem("rewards","◇","Premi")}
+          ${navItem("settings","•••","Altro")}
+        </div>
+      </nav>
+    </div>
+  `;
+
+  setTheme(document.documentElement.dataset.theme || "light");
+}
+
+function navItem(page,icon,label,count=0) {
+  return `<button class="nav-item ${currentPage===page?"active":""}" data-page="${page}">
+    <span class="nav-icon">${icon}${count?`<sup style="font-size:9px;color:var(--coral)">${count}</sup>`:""}</span>
+    <span>${label}</span>
+  </button>`;
+}
+
+function renderPage() {
+  switch(currentPage) {
+    case "home": return renderHome();
+    case "tasks": return renderTasks();
+    case "reviews": return renderReviews();
+    case "ranking": return renderRanking();
+    case "rewards": return renderRewards();
+    case "settings": return renderSettings();
+    default: return renderHome();
+  }
+}
+
+function renderHome() {
+  const myBalance = balance(me.id);
+  const pending = completions.filter(c=>c.performed_by===me.id && c.status==="pending").length;
+  const approved = completions.filter(c=>c.performed_by===me.id && c.status==="approved").length;
+  const available = myTasks().length;
+  const waiting = myPending().length;
+
+  const recent = completions.filter(c=>c.performed_by===me.id).slice(0,4);
+
+  return `
+    <section class="hero">
+      <div class="hero-content">
+        <span class="hero-tag">IL TUO SPAZIO DI CASA</span>
+        <h1>Ciao ${esc(me.display_name)}.<br>Facciamo squadra?</h1>
+        <p>Ogni gesto conta. Scegli un'attività, completa il tuo contributo e costruisci insieme una casa più serena.</p>
+        <button class="btn btn-primary" data-page="tasks">Scopri le faccende →</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid grid-3">
+        <div class="card stat-card">
+          <div class="stat-top"><span class="stat-label">I TUOI PUNTI</span><span class="stat-icon mustard">✦</span></div>
+          <div class="stat-value">${myBalance}</div>
+          <div class="stat-label">punti accumulati</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-top"><span class="stat-label">IN ATTESA</span><span class="stat-icon coral">◷</span></div>
+          <div class="stat-value">${pending}</div>
+          <div class="stat-label">attività da confermare</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-top"><span class="stat-label">COMPLETATE</span><span class="stat-icon sage">✓</span></div>
+          <div class="stat-value">${approved}</div>
+          <div class="stat-label">attività approvate</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head"><h2>La tua giornata</h2><span>${available} attività disponibili</span></div>
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="stat-icon blue">✳</div>
+          <h3 style="margin-top:12px">Fai la tua parte</h3>
+          <p>Scopri le attività e scegli da dove iniziare.</p>
+          <div class="btn-row"><button class="btn btn-soft btn-small" data-page="tasks">Vai alle faccende</button></div>
+        </div>
+        <div class="card">
+          <div class="stat-icon lilac">✓</div>
+          <h3 style="margin-top:12px">Conferme da gestire</h3>
+          <p>${waiting ? `${waiting} attività aspettano la tua revisione.` : "Non hai conferme in sospeso."}</p>
+          <div class="btn-row"><button class="btn btn-neutral btn-small" data-page="reviews">Apri conferme</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head"><h2>Le tue ultime attività</h2><span>Recenti</span></div>
+      <div class="card">
+        ${recent.length ? recent.map(c=>completionRow(c)).join("") : emptyState("✦","Il tuo percorso inizia qui","Completa una faccenda per vedere i tuoi progressi.")}
+      </div>
+    </section>
+  `;
+}
+
+function emptyState(icon,title,description) {
+  return `<div class="empty"><div class="empty-icon">${icon}</div><strong>${esc(title)}</strong><p style="margin-top:5px">${esc(description)}</p></div>`;
+}
+
+function completionRow(c) {
+  const task = tasks.find(t=>t.id===c.task_id);
+  const statusLabels = {pending:"In attesa",approved:"Approvata",rejected:"Da rifare",partial:"Da integrare"};
+  return `<div class="list-row">
+    <div class="list-main">
+      <strong>${esc(task?.title || "Attività")}</strong>
+      <small>${new Date(c.submitted_at).toLocaleDateString("it-IT")} · ${esc(statusLabels[c.status] || c.status)}</small>
+    </div>
+    <span class="pill ${esc(c.status)}">${c.status==="approved"?moneyPoints(c.awarded_points):statusLabels[c.status] || c.status}</span>
+  </div>`;
+}
+
+function renderTasks() {
+  const active = tasks.filter(t=>t.is_active && t.target_type===me.role &&
+    (!t.assigned_member_id || t.assigned_member_id===me.id));
+  const pendingIds = new Set(completions.filter(c=>c.performed_by===me.id && c.status==="pending").map(c=>c.task_id));
+
+  return `
+    <div class="section-head">
+      <h2>Attività disponibili</h2>
+      <span>${active.length} attività</span>
+    </div>
+    ${active.length ? `<div class="grid grid-2">${active.map((t,i)=>taskCard(t,pendingIds.has(t.id),i)).join("")}</div>` : `<div class="card">${emptyState("✳","Nessuna attività disponibile","Al momento non ci sono attività attive per il tuo profilo.")}</div>`}
+    <section class="section">
+      <div class="section-head"><h2>Gestione attività</h2><span>Amministrazione</span></div>
+      <div class="card">
+        <p>Puoi creare e modificare le attività della famiglia. Le attività create per adulti sono visibili agli adulti.</p>
+        <div class="btn-row"><button class="btn btn-primary" data-action="new-task">＋ Nuova attività</button></div>
+      </div>
+    </section>
+    <div id="taskFormSlot"></div>
+    <section class="section">
+      <div class="section-head"><h2>Archivio attività</h2><span>${tasks.length} in totale</span></div>
+      <div class="card">
+        ${tasks.map(t=>`
+          <div class="list-row">
+            <div class="list-main">
+              <strong>${esc(t.title)}</strong>
+              <small>${esc(categories[t.category] || t.category || "Altro")} · ${moneyPoints(t.points)} · ${t.is_active?"Attiva":"Disattivata"}</small>
+            </div>
+            <div class="btn-row" style="margin:0">
+              <button class="btn btn-neutral btn-small" data-action="edit-task" data-id="${t.id}">Modifica</button>
+              <button class="btn btn-small ${t.is_active?"btn-soft":"btn-primary"}" data-action="toggle-task" data-id="${t.id}" data-active="${!t.is_active}">${t.is_active?"Sospendi":"Attiva"}</button>
+            </div>
+          </div>
+        `).join("") || emptyState("✳","Archivio vuoto","Crea la prima attività.")}
+      </div>
+    </section>
+  `;
+}
+
+function taskCard(t,pending,index) {
+  const colors=["var(--coral)","var(--sage)","var(--lilac)","var(--blue)","var(--mustard)"];
+  return `<article class="card task-card" style="--task-color:${colors[index%colors.length]}">
+    <div class="task-top">
+      <div>
+        <div class="eyebrow">${esc(categories[t.category] || t.category || "Attività")}</div>
+        <div class="task-title" style="margin-top:6px">${esc(t.title)}</div>
+      </div>
+      <span class="points">+${Number(t.points||0)} pt</span>
+    </div>
+    ${t.description?`<div class="task-description">${esc(t.description)}</div>`:""}
+    <div class="task-meta"><span class="pill">${t.assigned_member_id?esc(memberName(t.assigned_member_id)):"Tutti"}</span></div>
+    <div class="task-actions">
+      ${pending
+        ? `<span class="pill pending">In attesa di conferma</span>`
+        : `<button class="btn btn-primary btn-small" data-action="submit-task" data-id="${t.id}">Ho completato ✓</button>`}
+    </div>
+  </article>`;
+}
+
+function taskForm(task=null) {
+  editingTask = task?.id || null;
+  const slot = document.getElementById("taskFormSlot");
+  if(!slot) return;
+  slot.innerHTML = `
+    <section class="section card form-card" id="taskEditor">
+      <div class="section-head"><h2>${task?"Modifica attività":"Crea un'attività"}</h2><button class="btn btn-neutral btn-small" data-action="close-task-form">Chiudi</button></div>
+      <form id="taskForm">
+        <div class="field"><label>Nome attività</label><input name="title" required maxlength="100" value="${esc(task?.title||"")}" placeholder="Es. Riordinare la cucina"></div>
+        <div class="grid grid-2">
+          <div class="field"><label>Categoria</label><select name="category">${Object.entries(categories).map(([k,v])=>`<option value="${k}" ${task?.category===k?"selected":""}>${v}</option>`).join("")}</select></div>
+          <div class="field"><label>Punti</label><input name="points" type="number" min="0" max="10000" required value="${Number(task?.points||10)}"></div>
+        </div>
+        <div class="field"><label>Descrizione</label><textarea name="description" placeholder="Aggiungi qualche dettaglio">${esc(task?.description||"")}</textarea></div>
+        <div class="field"><label>Destinatari</label><select name="target_type"><option value="adult" ${task?.target_type!=="child"?"selected":""}>Adulti</option><option value="child" ${task?.target_type==="child"?"selected":""}>Bambini</option></select></div>
+        <div class="field"><label>Assegnazione</label><select name="assigned_member_id"><option value="">Tutti i destinatari</option>${familyMembers.filter(m=>m.role===(task?.target_type||"adult")).map(m=>`<option value="${m.id}" ${task?.assigned_member_id===m.id?"selected":""}>${esc(m.display_name)}</option>`).join("")}</select></div>
+        <div class="btn-row"><button class="btn btn-primary" type="submit">${task?"Salva modifiche":"Crea attività"}</button><button class="btn btn-neutral" type="button" data-action="close-task-form">Annulla</button></div>
+      </form>
+    </section>
+  `;
+  slot.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function renderReviews() {
+  const pending = myPending();
+  const history = completions.filter(c=>c.reviewer_member_id===me.id && c.status!=="pending").slice(0,10);
+
+  return `
+    <section class="section">
+      <div class="section-head"><h2>Da revisionare</h2><span>${pending.length} in attesa</span></div>
+      ${pending.length ? `<div class="grid grid-2">${pending.map(c=>{
+        const task=tasks.find(t=>t.id===c.task_id);
+        return `<article class="card">
+          <div class="eyebrow">RICHIESTA DI CONFERMA</div>
+          <h3 style="margin-top:8px">${esc(task?.title||"Attività")}</h3>
+          <p>Completata da <strong>${esc(memberName(c.performed_by))}</strong></p>
+          <div class="task-meta"><span class="pill pending">In attesa</span><span class="points">${Number(c.submitted_points)} pt richiesti</span></div>
+          <div class="btn-row">
+            <button class="btn btn-primary btn-small" data-action="review" data-id="${c.id}" data-decision="approved">Approva</button>
+            <button class="btn btn-neutral btn-small" data-action="review" data-id="${c.id}" data-decision="partial">Parziale</button>
+            <button class="btn btn-danger btn-small" data-action="review" data-id="${c.id}" data-decision="rejected">Rifiuta</button>
+          </div>
+        </article>`;
+      }).join("")}</div>` : `<div class="card">${emptyState("✓","Tutto aggiornato","Non ci sono attività da confermare.")}</div>`}
+    </section>
+    <section class="section">
+      <div class="section-head"><h2>Revisioni recenti</h2><span>Storico</span></div>
+      <div class="card">${history.length?history.map(c=>completionRow(c)).join(""):emptyState("◷","Nessuna revisione","Le conferme gestite appariranno qui.")}</div>
+    </section>
+  `;
+}
+
+function renderRanking() {
+  const ranking = familyMembers.map(m=>({member:m,points:balance(m.id)}))
+    .sort((a,b)=>b.points-a.points);
+  const max = Math.max(1,...ranking.map(x=>x.points));
+
+  return `
+    <section class="hero">
+      <div class="hero-content">
+        <span class="hero-tag">INSIEME SI VA PIÙ LONTANO</span>
+        <h1>La squadra<br>di casa.</h1>
+        <p>Ogni punto racconta un gesto concreto per la famiglia.</p>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head"><h2>Classifica familiare</h2><span>Punti totali</span></div>
+      <div class="card">
+        ${ranking.map((item,i)=>`
+          <div class="list-row">
+            <div style="display:flex;align-items:center;gap:11px;min-width:0">
+              <div class="rank-number ${i===0?"mustard":""}">${i+1}</div>
+              <div class="avatar">${esc(initials(item.member.display_name))}</div>
+              <div class="list-main">
+                <strong>${esc(item.member.display_name)} ${item.member.id===me.id?'<span class="muted">(tu)</span>':""}</strong>
+                <small>${item.member.role==="adult"?"Adulto":"Bambino"}</small>
+              </div>
+            </div>
+            <div style="text-align:right">
+              <div class="score">${item.points}</div>
+              <small class="muted">punti</small>
+            </div>
+          </div>
+          <div class="progress"><span style="width:${Math.round(item.points/max*100)}%"></span></div>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderRewards() {
+  const active = rewards.filter(r=>r.is_active && r.target_type===me.role);
+  const myPoints = balance(me.id);
+
+  return `
+    <section class="hero">
+      <div class="hero-content">
+        <span class="hero-tag">PICCOLI TRAGUARDI</span>
+        <h1>Quale premio<br>ti piacerebbe?</h1>
+        <p>Raccogli punti con i tuoi gesti quotidiani e trasformali in momenti speciali.</p>
+        <div class="points" style="display:inline-block">Il tuo saldo: ${myPoints} pt</div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head"><h2>La vetrina dei premi</h2><span>${active.length} disponibili</span></div>
+      ${active.length?`<div class="grid grid-2">${active.map((r,i)=>`
+        <article class="card">
+          <div class="stat-icon ${["coral","sage","lilac","mustard"][i%4]}">${["◇","✦","♡","✧"][i%4]}</div>
+          <h3 style="margin-top:13px">${esc(r.title)}</h3>
+          <p>${esc(r.description||"Un premio da conquistare insieme.")}</p>
+          <div class="task-meta"><span class="points">${Number(r.points_cost)} pt</span><span class="pill">${myPoints>=r.points_cost?"Alla tua portata":"Da conquistare"}</span></div>
+        </article>`).join("")}</div>`:`<div class="card">${emptyState("◇","Nessun premio disponibile","I premi appariranno qui quando saranno attivati.")}</div>`}
+    </section>
+    <section class="section">
+      <div class="section-head"><h2>Gestione premi</h2><span>Amministrazione</span></div>
+      <div class="card">
+        <p>Crea e gestisci i premi della famiglia.</p>
+        <div class="btn-row"><button class="btn btn-primary" data-action="new-reward">＋ Nuovo premio</button></div>
+      </div>
+    </section>
+    <div id="rewardFormSlot"></div>
+    <section class="section">
+      <div class="section-head"><h2>Archivio premi</h2><span>${rewards.length} in totale</span></div>
+      <div class="card">
+        ${rewards.map(r=>`
+          <div class="list-row">
+            <div class="list-main"><strong>${esc(r.title)}</strong><small>${Number(r.points_cost)} punti · ${r.is_active?"Attivo":"Disattivato"}</small></div>
+            <div class="btn-row" style="margin:0">
+              <button class="btn btn-neutral btn-small" data-action="edit-reward" data-id="${r.id}">Modifica</button>
+              <button class="btn btn-small ${r.is_active?"btn-soft":"btn-primary"}" data-action="toggle-reward" data-id="${r.id}" data-active="${!r.is_active}">${r.is_active?"Sospendi":"Attiva"}</button>
+            </div>
+          </div>`).join("") || emptyState("◇","Nessun premio","Crea il primo premio.")}
+      </div>
+    </section>
+  `;
+}
+
+function rewardForm(reward=null) {
+  editingReward = reward?.id || null;
+  const slot = document.getElementById("rewardFormSlot");
+  if(!slot) return;
+  slot.innerHTML = `
+    <section class="section card form-card">
+      <div class="section-head"><h2>${reward?"Modifica premio":"Crea un premio"}</h2><button class="btn btn-neutral btn-small" data-action="close-reward-form">Chiudi</button></div>
+      <form id="rewardForm">
+        <div class="field"><label>Nome del premio</label><input name="title" required maxlength="100" value="${esc(reward?.title||"")}" placeholder="Es. Serata cinema"></div>
+        <div class="field"><label>Descrizione</label><textarea name="description">${esc(reward?.description||"")}</textarea></div>
+        <div class="field"><label>Costo in punti</label><input name="points_cost" type="number" min="0" required value="${Number(reward?.points_cost||50)}"></div>
+        <div class="btn-row"><button class="btn btn-primary" type="submit">${reward?"Salva modifiche":"Crea premio"}</button></div>
+      </form>
+    </section>`;
+  slot.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function renderSettings() {
+  return `
+    <section class="section">
+      <div class="card">
+        <div class="eyebrow">IL TUO PROFILO</div>
+        <div style="display:flex;align-items:center;gap:13px;margin-top:13px">
+          <div class="avatar" style="width:48px;height:48px;font-size:17px">${esc(initials(me.display_name))}</div>
+          <div><h3>${esc(me.display_name)}</h3><p>${esc(session.user.email||"")} · Amministratore</p></div>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head"><h2>Aspetto</h2><span>Preferenze dispositivo</span></div>
+      <div class="card">
+        <div class="list-row"><div class="list-main"><strong>Tema dell'app</strong><small>La scelta viene salvata su questo dispositivo.</small></div><button class="btn btn-neutral btn-small" onclick="toggleTheme()">Cambia tema ☾</button></div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head"><h2>Famiglia</h2></div>
+      <div class="card">
+        <div class="list-row"><div class="list-main"><strong>CASA CLUB</strong><small>${familyMembers.length} membri collegati</small></div><span class="pill approved">Connessa</span></div>
+        ${familyMembers.map(m=>`<div class="list-row"><div class="list-main"><strong>${esc(m.display_name)}</strong><small>${m.role==="adult"?"Adulto":"Bambino"}</small></div><span class="pill">${m.id===me.id?"Tu":"Familiare"}</span></div>`).join("")}
+      </div>
+    </section>
+    <section class="section">
+      <div class="card">
+        <h3>Sessione</h3>
+        <p>Esci dal tuo account su questo dispositivo.</p>
+        <div class="btn-row"><button class="btn btn-danger" data-action="logout">Esci da CASA CLUB</button><button class="btn btn-neutral" data-action="refresh">Aggiorna dati</button></div>
+      </div>
+    </section>
+    <p class="small muted" style="text-align:center">CASA CLUB · La casa è una squadra. Ogni gesto conta.</p>
+  `;
+}
+
+function renderLogin() {
+  root.innerHTML = `
+    <div class="login-screen">
+      <section class="login-card">
+        <div class="login-logo">⌂</div>
+        <div class="eyebrow">LA CASA È UNA SQUADRA</div>
+        <h1>CASA CLUB</h1>
+        <p>Ogni gesto conta. Accedi al tuo spazio di famiglia.</p>
+        <form id="loginForm">
+          <div class="field"><label>EMAIL</label><input name="email" type="email" autocomplete="username" required placeholder="La tua email"></div>
+          <div class="field"><label>PASSWORD</label><input name="password" type="password" autocomplete="current-password" required placeholder="La tua password"></div>
+          <button class="btn btn-primary" type="submit" style="width:100%;padding:14px;margin-top:7px">Accedi →</button>
+        </form>
+        <p id="loginError" class="small" style="color:var(--coral);margin-top:14px"></p>
+        <div class="notice">Usa il tuo account personale Walter o Carlotta. Entrambi fanno parte della stessa famiglia.</div>
+      </section>
+    </div>
+  `;
+}
+
+async function login(form) {
+  const data = new FormData(form);
+  const {error} = await db.auth.signInWithPassword({
+    email:data.get("email"),
+    password:data.get("password")
+  });
+  if(error) {
+    document.getElementById("loginError").textContent = error.message;
+    return;
+  }
+  await startApp();
+}
+
+async function startApp() {
+  const {data} = await db.auth.getSession();
+  session = data.session;
+  if(!session) return renderLogin();
+
+  try {
+    await loadMember();
+    await loadData();
+    if(refreshTimer) clearInterval(refreshTimer);
+    refreshTimer = setInterval(()=>loadData().catch(console.error),30000);
+  } catch(error) {
+    console.error(error);
+    root.innerHTML = `<div class="login-screen"><div class="login-card"><h2>Accesso non completato</h2><p>${esc(error.message)}</p><button class="btn btn-primary" onclick="logout()">Esci e riprova</button></div></div>`;
+  }
+}
+
+async function logout() {
+  if(refreshTimer) clearInterval(refreshTimer);
+  await db.auth.signOut();
+  session=null;me=null;
+  tasks=[];completions=[];rewards=[];ledger=[];
+  renderLogin();
+}
+
+async function submitTask(taskId) {
+  const task = tasks.find(t=>t.id===taskId);
+  if(!task) return;
+  await runAction(async()=>{
+    const {error} = await db.rpc("submit_completion",{p_task_id:taskId});
+    if(error) throw error;
+  },"Attività inviata per la conferma!");
+}
+
+async function reviewTask(id,decision) {
+  let note = "";
+  if(decision==="partial" || decision==="rejected") {
+    note = prompt(decision==="partial"?"Cosa manca da completare?":"Motivo del rifiuto:") || "";
+    if(!note.trim()) {toast("Inserisci una breve motivazione.");return;}
+  }
+  await runAction(async()=>{
+    const {error} = await db.rpc("review_completion",{
+      p_completion_id:id,
+      p_decision:decision,
+      p_note:note
+    });
+    if(error) throw error;
+  },decision==="approved"?"Attività approvata!":"Revisione registrata.");
+}
+
+async function createOrUpdateTask(form) {
+  const d = new FormData(form);
+  const args = {
+    p_title:String(d.get("title")).trim(),
+    p_category:d.get("category") || null,
+    p_description:String(d.get("description")||"").trim() || null,
+    p_points:Number(d.get("points")),
+    p_target_type:d.get("target_type") || "adult",
+    p_assigned_member_id:d.get("assigned_member_id") || null
+  };
+
+  await runAction(async()=>{
+    let result;
+    if(editingTask) {
+      result = await db.rpc("update_task",{
+        p_task_id:editingTask,
+        p_title:args.p_title,
+        p_category:args.p_category,
+        p_description:args.p_description,
+        p_points:args.p_points,
+        p_assigned_member_id:args.p_assigned_member_id
+      });
+    } else {
+      result = await db.rpc("create_task",args);
+    }
+    if(result.error) throw result.error;
+    editingTask=null;
+  },editingTask?"Attività aggiornata!":"Attività creata!");
+}
+
+async function toggleTask(id,active) {
+  await runAction(async()=>{
+    const {error} = await db.rpc("set_task_active",{p_task_id:id,p_is_active:active});
+    if(error) throw error;
+  },active?"Attività attivata":"Attività sospesa");
+}
+
+async function createOrUpdateReward(form) {
+  const d = new FormData(form);
+  const args = {
+    p_title:String(d.get("title")).trim(),
+    p_description:String(d.get("description")||"").trim() || null,
+    p_points_cost:Number(d.get("points_cost"))
+  };
+
+  await runAction(async()=>{
+    let result;
+    if(editingReward) {
+      result = await db.rpc("update_reward",{
+        p_reward_id:editingReward,
+        ...args
+      });
+    } else {
+      result = await db.rpc("create_reward",{
+        ...args,
+        p_target_type:"adult"
+      });
+    }
+    if(result.error) throw result.error;
+    editingReward=null;
+  },editingReward?"Premio aggiornato!":"Premio creato!");
+}
+
+async function toggleReward(id,active) {
+  await runAction(async()=>{
+    const {error} = await db.rpc("set_reward_active",{p_reward_id:id,p_is_active:active});
+    if(error) throw error;
+  },active?"Premio attivato":"Premio sospeso");
+}
+
+document.addEventListener("click",async event=>{
+  const pageButton = event.target.closest("[data-page]");
+  if(pageButton) {
+    currentPage=pageButton.dataset.page;
+    render();
+    window.scrollTo({top:0,behavior:"smooth"});
+    return;
+  }
+
+  const button = event.target.closest("[data-action]");
+  if(!button) return;
+
+  const action=button.dataset.action;
+  const id=button.dataset.id;
+
+  try {
+    if(action==="new-task") taskForm();
+    if(action==="edit-task") taskForm(tasks.find(t=>t.id===id));
+    if(action==="close-task-form") {
+      editingTask=null;
+      document.getElementById("taskFormSlot").innerHTML="";
+    }
+    if(action==="submit-task") await submitTask(id);
+    if(action==="toggle-task") await toggleTask(id,button.dataset.active==="true");
+    if(action==="review") await reviewTask(id,button.dataset.decision);
+    if(action==="new-reward") rewardForm();
+    if(action==="edit-reward") rewardForm(rewards.find(r=>r.id===id));
+    if(action==="close-reward-form") {
+      editingReward=null;
+      document.getElementById("rewardFormSlot").innerHTML="";
+    }
+    if(action==="toggle-reward") await toggleReward(id,button.dataset.active==="true");
+    if(action==="logout") await logout();
+    if(action==="refresh") await runAction(async()=>{}, "Dati aggiornati");
+  } catch(error) {
+    console.error(error);
+    toast(error.message || "Operazione non riuscita");
+  }
 });
 
-$('loginForm').addEventListener('submit',login);
-db.auth.onAuthStateChange((event,newSession)=>{
- if(event==='SIGNED_OUT'){
-  stopRefresh();session=null;currentMember=null;showLogin();
- }
+document.addEventListener("submit",async event=>{
+  if(event.target.id==="loginForm") {
+    event.preventDefault();
+    const button=event.target.querySelector('button[type="submit"]');
+    button.disabled=true;
+    button.textContent="Accesso…";
+    try {await login(event.target);}
+    catch(error) {
+      document.getElementById("loginError").textContent=error.message;
+    } finally {
+      if(button.isConnected) {
+        button.disabled=false;
+        button.textContent="Accedi →";
+      }
+    }
+  }
+
+  if(event.target.id==="taskForm") {
+    event.preventDefault();
+    await createOrUpdateTask(event.target);
+  }
+
+  if(event.target.id==="rewardForm") {
+    event.preventDefault();
+    await createOrUpdateReward(event.target);
+  }
 });
-checkSession().catch(error=>{showLogin();notify('Errore di avvio: '+error.message);});
+
+db.auth.onAuthStateChange((_event,newSession)=>{
+  session=newSession;
+  if(newSession && !me) {
+    setTimeout(()=>startApp(),0);
+  } else if(!newSession) {
+    me=null;
+    renderLogin();
+  }
+});
+
+startApp();
 </script>
 </body>
 </html>
